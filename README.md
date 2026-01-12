@@ -44,15 +44,15 @@ Create `Secrets.xcconfig` in the repo root (it is gitignored):
 TMDB_API_KEY = YOUR_TMDB_KEY_HERE
 ```
 
-If no key is present, the app runs in demo mode using the bundled `Popcorn/Resources/SampleMovies.json`.
+If no key is present, the app runs in demo mode using the bundled `Popcorn/Resources/SampleMovies.json` (~100 movies).
 
-## How the Top 500 fetch works
+## How the Top 1000 fetch works
 
 - Uses TMDb `/discover/movie`.
 - Filters to the last 30 years (primary release date).
 - Sorts by `vote_average` descending.
 - Enforces `vote_count.gte` using `AppConfig.minimumVoteCount` (default 2000).
-- Paginates until 500 unique movies are collected, then saves to SwiftData.
+- Paginates until 1000 unique movies are collected, then saves to SwiftData.
 - Credits and keywords are fetched lazily only when insights need them.
 
 To re-run the fetch, reset the local SwiftData store (see below) and relaunch.

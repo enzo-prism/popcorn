@@ -2,6 +2,7 @@ import Foundation
 
 enum AppConfig {
     static let minimumVoteCount = 2000
+    static let topMovieTargetCount = 1000
     static let refreshMomentInterval = 10
     static let eloKFactor: Double = 32
     static let recentPairBufferSize = 50

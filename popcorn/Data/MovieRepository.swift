@@ -38,7 +38,7 @@ final class MovieRepository {
         }
 
         let dtos = try await client.fetchTopMovies(
-            limit: 500,
+            limit: AppConfig.topMovieTargetCount,
             minVoteCount: AppConfig.minimumVoteCount,
             from: startDate,
             to: endDate
