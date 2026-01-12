@@ -83,9 +83,21 @@ struct MovieCardView: View {
 
     private var titleText: some View {
         ViewThatFits(in: .vertical) {
-            MovieTitleLabel(text: movie.title, font: titleUIFont(style: .headline, weight: .semibold))
-            MovieTitleLabel(text: movie.title, font: titleUIFont(style: .subheadline, weight: .semibold))
-            MovieTitleLabel(text: movie.title, font: titleUIFont(style: .footnote, weight: .semibold))
+            MovieTitleLabel(
+                text: movie.title,
+                font: titleUIFont(style: .headline, weight: .semibold),
+                textColor: .white
+            )
+            MovieTitleLabel(
+                text: movie.title,
+                font: titleUIFont(style: .subheadline, weight: .semibold),
+                textColor: .white
+            )
+            MovieTitleLabel(
+                text: movie.title,
+                font: titleUIFont(style: .footnote, weight: .semibold),
+                textColor: .white
+            )
         }
     }
 
@@ -123,33 +135,4 @@ struct MovieCardView: View {
     )
     .padding()
     .background(Color.black.opacity(0.05))
-}
-
-private struct MovieTitleLabel: UIViewRepresentable {
-    let text: String
-    let font: UIFont
-
-    func makeUIView(context: Context) -> UILabel {
-        let label = UILabel()
-        label.numberOfLines = 0
-        label.textColor = .white
-        label.lineBreakMode = .byWordWrapping
-        label.adjustsFontForContentSizeCategory = true
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        label.accessibilityIdentifier = "movie-card-title"
-        return label
-    }
-
-    func updateUIView(_ uiView: UILabel, context: Context) {
-        uiView.text = text
-        uiView.font = font
-    }
-
-    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize {
-        let targetWidth = proposal.width ?? uiView.bounds.width
-        let width = targetWidth > 0 ? targetWidth : 0
-        let size = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
-        return CGSize(width: width == 0 ? size.width : width, height: size.height)
-    }
 }

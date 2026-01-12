@@ -96,13 +96,13 @@ private struct PickCardColumn: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            MovieCardView(
+            PickMovieCardView(
                 movie: movie,
                 isSelected: isSelected,
                 isDimmed: isDimmed,
+                accessibilityID: accessibilityID,
                 action: action
             )
-            .accessibilityIdentifier(accessibilityID)
             .background(
                 GeometryReader { proxy in
                     Color.clear.preference(key: CardWidthPreferenceKey.self, value: [side: proxy.size.width])
@@ -116,6 +116,8 @@ private struct PickCardColumn: View {
                 Label("Haven't seen", systemImage: "eye.slash")
             }
             .buttonStyle(GlassButtonStyle(cornerRadius: 14))
+            .accessibilityIdentifier("\(accessibilityID)-not-seen")
+            .background(AccessibilityMarkerView(identifier: "\(accessibilityID)-not-seen"))
         }
     }
 }
