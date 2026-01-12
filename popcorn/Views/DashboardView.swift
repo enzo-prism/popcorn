@@ -47,6 +47,19 @@ struct DashboardView: View {
                 }
 
                 if let insightsCache {
+                    if insightsCache.sourceMovieCount > 0 {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Based on \(insightsCache.sourcePickCount) picks across \(insightsCache.sourceMovieCount) movies")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            if insightsCache.detailsCoverage > 0 {
+                                Text("Details coverage \(Int(insightsCache.detailsCoverage * 100))%")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
                     insightBlock(title: "Favorite genres", systemImage: "theatermasks", items: insightsCache.favoriteGenres)
                     insightBlock(title: "Favorite actors", systemImage: "person.2.fill", items: insightsCache.favoriteActors)
                     insightBlock(title: "Favorite directors", systemImage: "video.fill", items: insightsCache.favoriteDirectors)

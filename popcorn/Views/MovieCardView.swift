@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct MovieCardView: View {
     let movie: Movie
@@ -28,10 +29,7 @@ struct MovieCardView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Spacer()
-                    Text(movie.title)
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .lineLimit(2)
+                    titleText
                     Text(detailLine)
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.85))
@@ -83,6 +81,22 @@ struct MovieCardView: View {
         return "\(yearText) • \(genres)"
     }
 
+    private var titleText: some View {
+        ViewThatFits(in: .vertical) {
+            MovieTitleLabel(text: movie.title, font: titleUIFont(style: .headline, weight: .semibold))
+            MovieTitleLabel(text: movie.title, font: titleUIFont(style: .subheadline, weight: .semibold))
+            MovieTitleLabel(text: movie.title, font: titleUIFont(style: .footnote, weight: .semibold))
+        }
+    }
+
+    private func titleUIFont(style: UIFont.TextStyle, weight: UIFont.Weight) -> UIFont {
+        let base = UIFont.preferredFont(forTextStyle: style)
+        let descriptor = base.fontDescriptor.addingAttributes([
+            .traits: [UIFontDescriptor.TraitKey.weight: weight]
+        ])
+        return UIFont(descriptor: descriptor, size: 0)
+    }
+
     private var posterURL: URL? {
         guard let path = movie.posterPath else { return nil }
         return TMDbImageURL.posterURL(path: path)
@@ -109,4 +123,24 @@ struct MovieCardView: View {
     )
     .padding()
     .background(Color.black.opacity(0.05))
+}
+
+private struct MovieTitleLabel: UIViewRepresentable {
+    let text: String
+    let font: UIFont
+
+    func makeUIView(context: Context) -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .white
+        label.lineBreakMode = .byWordWrapping
+        label.adjustsFontForContentSizeCategory = true
+        label.accessibilityIdentifier = "movie-card-title"
+        return label
+    }
+
+    func updateUIView(_ uiView: UILabel, context: Context) {
+        uiView.text = text
+        uiView.font = font
+    }
 }

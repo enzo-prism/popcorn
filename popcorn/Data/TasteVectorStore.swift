@@ -23,7 +23,8 @@ final class TasteVectorStore {
 
         for movie in movies {
             let vector = vectorByMovieId[movie.tmdbID]
-            if shouldRecomputeAll || vector == nil || vector?.version != builder.version {
+            let refreshForDetails = vector.map { needsRefresh(movie: movie, vector: $0) } ?? false
+            if shouldRecomputeAll || vector == nil || vector?.version != builder.version || refreshForDetails {
                 let values = builder.vector(for: movie).values
                 if let vector {
                     vector.values = values
@@ -78,6 +79,11 @@ final class TasteVectorStore {
         var descriptor = FetchDescriptor<TasteAxesConfigState>()
         descriptor.fetchLimit = 1
         return try? context.fetch(descriptor).first
+    }
+
+    private func needsRefresh(movie: Movie, vector: MovieTasteVector) -> Bool {
+        guard let details = movie.details else { return false }
+        return details.lastUpdatedAt > vector.computedAt
     }
 
     private func saveContext() {

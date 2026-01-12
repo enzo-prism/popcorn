@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,7 @@
 		305DE015C8AD04E239F7B057 /* PairSelectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE03B76DAAF8D8C91B477FC /* PairSelectorTests.swift */; };
 		31A7A68E4C354DF06A054975 /* TasteAxesConfigState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4657420E626513183CF8EA0 /* TasteAxesConfigState.swift */; };
 		3A5B85D83AC59F0FFA901C8B /* TasteVectorBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513A5AC93652B94C5558A616 /* TasteVectorBuilder.swift */; };
+		3BB9029C47EEA5C6B95A6774 /* MovieCardViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E34A6787F006B516208B19C /* MovieCardViewTests.swift */; };
 		4008949A8B1AB1574BDAA367 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DBC5F7300A7DBF49CD8B17 /* Movie.swift */; };
 		4285C85C2F6023965832ED57 /* RefreshMomentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213900756345FCEE968F060E /* RefreshMomentSheet.swift */; };
 		49367D7835F45CF2F193917C /* MovieCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80FF50F44B630F5F4880FCE6 /* MovieCardView.swift */; };
@@ -29,11 +30,13 @@
 		704D607B30EA8C8208D04581 /* EloRankerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5AB1A1F817A402084FF96A /* EloRankerTests.swift */; };
 		704FC93995D6D0CA99D85DA0 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368305BD7F5EE847B5AA78EC /* AppConfig.swift */; };
 		721B6D21213E52B4E01868B0 /* TasteVectorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9075F040FFC5403B2D80730F /* TasteVectorStore.swift */; };
+		725105732D65EA2828B0B786 /* TMDbClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54215DB65C06A851FD413F1 /* TMDbClientTests.swift */; };
 		75BEE87062E5E93B871A9D17 /* GlassStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761F6B53A0FC725244D6248E /* GlassStyle.swift */; };
 		7A41A60C6C84B4CB950CA9C4 /* ForcedChoiceTasteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68FFDC3BB60372101C227E7 /* ForcedChoiceTasteModel.swift */; };
 		7C2BAE7A2B50004175F50908 /* PickViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B550F7F01C891755B72DBF /* PickViewModel.swift */; };
 		7CE4934BC52A0FD8769C1CEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975DDE35C35D3DC82FB33A4C /* ContentView.swift */; };
 		8E62CFB8BB8A76804D7434C0 /* MovieDetailsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0656E40F3992FE1DA5A3BC86 /* MovieDetailsService.swift */; };
+		96C3A07667F162DCED2AF925 /* InsightsScorerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17E2514DC5057DA119F7614 /* InsightsScorerTests.swift */; };
 		9B2B6DD1FE16E3B7DE4688D9 /* PersonalityPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB51277F4FEA30F06063178 /* PersonalityPresenter.swift */; };
 		9F8A7A3EADB9A5CB50E87118 /* PickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A41658CD182A5675E0874F /* PickView.swift */; };
 		A170A20CC20A3E30A93A9585 /* InsightsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF14BF216A2C741B1881B61 /* InsightsCache.swift */; };
@@ -53,6 +56,7 @@
 		D1110CE8F905067D8A2A0685 /* TasteProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845AB943D1FE7AA5BF73A343 /* TasteProfileStore.swift */; };
 		D497F7FD909F7FB2CA0C667A /* CodableStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A85AB349452815442DCE043 /* CodableStore.swift */; };
 		D7D9B8FB736C4091848B0CFE /* PreviewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EBE7E942007730E190BF35F /* PreviewStore.swift */; };
+		E352B8C73915BFDD6ECC6871 /* InsightsScorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2312F480FF18E51AEE501F2 /* InsightsScorer.swift */; };
 		E43EAA57E4C9D35E1153AFA3 /* TasteCATSelectorDeterminismTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B085D990C076BBFEE770C535 /* TasteCATSelectorDeterminismTests.swift */; };
 		EE5FBBE6642A22B83CFA2133 /* TasteCATSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 756E4C63177A83A8456BDE8E /* TasteCATSelector.swift */; };
 		F1697166F91D8F508E47BFA3 /* popcornApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843BD24BC18171B6949214D /* popcornApp.swift */; };
@@ -80,13 +84,14 @@
 		1CB294353BE57DB6DA088A2D /* SimulationConvergenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationConvergenceTests.swift; sourceTree = "<group>"; };
 		213900756345FCEE968F060E /* RefreshMomentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMomentSheet.swift; sourceTree = "<group>"; };
 		2AB51277F4FEA30F06063178 /* PersonalityPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalityPresenter.swift; sourceTree = "<group>"; };
+		2E34A6787F006B516208B19C /* MovieCardViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardViewTests.swift; sourceTree = "<group>"; };
 		368305BD7F5EE847B5AA78EC /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		3DE03B76DAAF8D8C91B477FC /* PairSelectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairSelectorTests.swift; sourceTree = "<group>"; };
 		3EBE7E942007730E190BF35F /* PreviewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStore.swift; sourceTree = "<group>"; };
 		49B550F7F01C891755B72DBF /* PickViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickViewModel.swift; sourceTree = "<group>"; };
 		4FAD7D7E8C20F0DFDF132AEB /* EloRanker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EloRanker.swift; sourceTree = "<group>"; };
 		513A5AC93652B94C5558A616 /* TasteVectorBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteVectorBuilder.swift; sourceTree = "<group>"; };
-		5EABD0AC987248FCAFFFBA3B /* Popcorn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Popcorn.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EABD0AC987248FCAFFFBA3B /* Popcorn.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Popcorn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FFD1D68117BD29FC8FB1539 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6599C9BD354AC77313D18653 /* TMDbImageURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDbImageURL.swift; sourceTree = "<group>"; };
 		6BA38E3C000AE3582AA59329 /* MovieRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRowView.swift; sourceTree = "<group>"; };
@@ -95,7 +100,7 @@
 		70D65C89B690128C33E39DF7 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		756E4C63177A83A8456BDE8E /* TasteCATSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteCATSelector.swift; sourceTree = "<group>"; };
 		761F6B53A0FC725244D6248E /* GlassStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassStyle.swift; sourceTree = "<group>"; };
-		769926F726C063416530CB7E /* PopcornTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PopcornTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		769926F726C063416530CB7E /* PopcornTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PopcornTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F44AF165B5D4A24F12005C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		80FF50F44B630F5F4880FCE6 /* MovieCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardView.swift; sourceTree = "<group>"; };
 		845AB943D1FE7AA5BF73A343 /* TasteProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteProfileStore.swift; sourceTree = "<group>"; };
@@ -116,10 +121,13 @@
 		C03F9417EC51E39427FA08D9 /* MovieRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRepository.swift; sourceTree = "<group>"; };
 		C08AB258E0671C27679D0702 /* DemoModeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoModeBanner.swift; sourceTree = "<group>"; };
 		CEE68E31C04A19EEC8132FED /* ForcedChoiceTasteModelUpdateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForcedChoiceTasteModelUpdateTests.swift; sourceTree = "<group>"; };
+		D17E2514DC5057DA119F7614 /* InsightsScorerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsScorerTests.swift; sourceTree = "<group>"; };
 		D28092151DADB3202DC80F74 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D54215DB65C06A851FD413F1 /* TMDbClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDbClientTests.swift; sourceTree = "<group>"; };
 		D843BD24BC18171B6949214D /* popcornApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = popcornApp.swift; sourceTree = "<group>"; };
 		D97ADBB5F5A44FE6C80DD053 /* TMDbClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDbClient.swift; sourceTree = "<group>"; };
 		DC7900FF0A42CAECC06CC7DC /* PairSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairSelector.swift; sourceTree = "<group>"; };
+		E2312F480FF18E51AEE501F2 /* InsightsScorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsScorer.swift; sourceTree = "<group>"; };
 		E38E5FA8346D42C0AF103D6A /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		E4657420E626513183CF8EA0 /* TasteAxesConfigState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteAxesConfigState.swift; sourceTree = "<group>"; };
 		E50C4A5340972CFAA8C02216 /* SampleMoviesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleMoviesLoader.swift; sourceTree = "<group>"; };
@@ -156,6 +164,7 @@
 				4FAD7D7E8C20F0DFDF132AEB /* EloRanker.swift */,
 				F68FFDC3BB60372101C227E7 /* ForcedChoiceTasteModel.swift */,
 				BA5D62E4ADB0FE347E3D94FB /* InsightsEngine.swift */,
+				E2312F480FF18E51AEE501F2 /* InsightsScorer.swift */,
 				0656E40F3992FE1DA5A3BC86 /* MovieDetailsService.swift */,
 				0290D1924EC6A8C5BDF3EC33 /* MoviePair.swift */,
 				DC7900FF0A42CAECC06CC7DC /* PairSelector.swift */,
@@ -202,9 +211,12 @@
 				EC5AB1A1F817A402084FF96A /* EloRankerTests.swift */,
 				CEE68E31C04A19EEC8132FED /* ForcedChoiceTasteModelUpdateTests.swift */,
 				7F44AF165B5D4A24F12005C2 /* Info.plist */,
+				D17E2514DC5057DA119F7614 /* InsightsScorerTests.swift */,
+				2E34A6787F006B516208B19C /* MovieCardViewTests.swift */,
 				3DE03B76DAAF8D8C91B477FC /* PairSelectorTests.swift */,
 				1CB294353BE57DB6DA088A2D /* SimulationConvergenceTests.swift */,
 				B085D990C076BBFEE770C535 /* TasteCATSelectorDeterminismTests.swift */,
+				D54215DB65C06A851FD413F1 /* TMDbClientTests.swift */,
 			);
 			path = PopcornTests;
 			sourceTree = "<group>";
@@ -332,6 +344,7 @@
 			);
 			mainGroup = 2B41456DED16CAAAEB9C7FA2;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -371,6 +384,7 @@
 				B34EEC6BB13B50D50BB842E4 /* ImageCache.swift in Sources */,
 				A170A20CC20A3E30A93A9585 /* InsightsCache.swift in Sources */,
 				A201D9186FE4E6D15C8D940B /* InsightsEngine.swift in Sources */,
+				E352B8C73915BFDD6ECC6871 /* InsightsScorer.swift in Sources */,
 				4008949A8B1AB1574BDAA367 /* Movie.swift in Sources */,
 				49367D7835F45CF2F193917C /* MovieCardView.swift in Sources */,
 				5138A63F24098C220A2D5D3E /* MovieDetailView.swift in Sources */,
@@ -411,8 +425,11 @@
 			files = (
 				704D607B30EA8C8208D04581 /* EloRankerTests.swift in Sources */,
 				B3FC87ECADBA43A915EBE425 /* ForcedChoiceTasteModelUpdateTests.swift in Sources */,
+				96C3A07667F162DCED2AF925 /* InsightsScorerTests.swift in Sources */,
+				3BB9029C47EEA5C6B95A6774 /* MovieCardViewTests.swift in Sources */,
 				305DE015C8AD04E239F7B057 /* PairSelectorTests.swift in Sources */,
 				BBB5A25EFF381E77B54965AE /* SimulationConvergenceTests.swift in Sources */,
+				725105732D65EA2828B0B786 /* TMDbClientTests.swift in Sources */,
 				E43EAA57E4C9D35E1153AFA3 /* TasteCATSelectorDeterminismTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,7 +452,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L49MKXGVM4;
 				INFOPLIST_FILE = Popcorn/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -456,7 +472,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L49MKXGVM4;
 				INFOPLIST_FILE = Popcorn/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (

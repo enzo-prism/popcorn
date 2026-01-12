@@ -15,6 +15,9 @@ final class InsightsCache {
     var personalityTraitsData: Data
     var personalitySummary: String
     var personalityConfidence: Double
+    var sourceMovieCount: Int
+    var sourcePickCount: Int
+    var detailsCoverage: Double
 
     init(
         updatedAt: Date = Date(),
@@ -26,7 +29,10 @@ final class InsightsCache {
         personalityTitle: String = "",
         personalityTraits: [String] = [],
         personalitySummary: String = "",
-        personalityConfidence: Double = 0
+        personalityConfidence: Double = 0,
+        sourceMovieCount: Int = 0,
+        sourcePickCount: Int = 0,
+        detailsCoverage: Double = 0
     ) {
         self.id = UUID()
         self.updatedAt = updatedAt
@@ -39,6 +45,9 @@ final class InsightsCache {
         self.personalityTraitsData = CodableStore.encode(personalityTraits)
         self.personalitySummary = personalitySummary
         self.personalityConfidence = personalityConfidence
+        self.sourceMovieCount = sourceMovieCount
+        self.sourcePickCount = sourcePickCount
+        self.detailsCoverage = detailsCoverage
     }
 
     var favoriteGenres: [NamedMetric] {
@@ -75,4 +84,24 @@ final class InsightsCache {
 struct NamedMetric: Codable, Hashable {
     var name: String
     var score: Double
+    var support: Double
+
+    init(name: String, score: Double, support: Double = 0) {
+        self.name = name
+        self.score = score
+        self.support = support
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case score
+        case support
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        score = try container.decode(Double.self, forKey: .score)
+        support = try container.decodeIfPresent(Double.self, forKey: .support) ?? 0
+    }
 }

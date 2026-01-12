@@ -7,9 +7,32 @@ final class InsightsEngine {
     private let detailsService: MovieDetailsService
     private let personalityPresenter = PersonalityPresenter()
     private let refreshInterval: TimeInterval = 60 * 60 * 12
-    private let topLimit = 20
-    private let recentLimit = 20
-    private let detailsFetchLimit = 20
+    private let refreshPickDelta = 5
+    private let topLimit = 40
+    private let recentLimit = 40
+    private let comparedLimit = 200
+    private let detailsFetchLimit = 60
+
+    private let minGenreSupport = 0.6
+    private let minPeopleSupport = 0.4
+    private let minKeywordSupport = 0.35
+    private let minTagScore = 0.02
+    private let keywordWeight = 0.6
+
+    private let keywordStoplist: Set<String> = [
+        "based on novel or book",
+        "based on true story",
+        "duringcreditsstinger",
+        "aftercreditsstinger",
+        "sequel",
+        "prequel",
+        "remake",
+        "reboot",
+        "based on comic",
+        "based on comic book",
+        "based on manga",
+        "based on graphic novel"
+    ]
 
     init(context: ModelContext) {
         self.context = context
@@ -21,7 +44,10 @@ final class InsightsEngine {
         if let cache, !force {
             let age = Date().timeIntervalSince(cache.updatedAt)
             if age < refreshInterval {
-                return cache
+                let currentPickCount = fetchComparisonEvents().count
+                if currentPickCount - cache.sourcePickCount < refreshPickDelta {
+                    return cache
+                }
             }
         }
 
@@ -36,6 +62,9 @@ final class InsightsEngine {
         target.personalityTraits = snapshot.personality.traits
         target.personalitySummary = snapshot.personality.summary
         target.personalityConfidence = snapshot.personality.confidence
+        target.sourceMovieCount = snapshot.sourceMovieCount
+        target.sourcePickCount = snapshot.sourcePickCount
+        target.detailsCoverage = snapshot.detailsCoverage
         target.updatedAt = Date()
 
         if cache == nil {
@@ -52,53 +81,232 @@ final class InsightsEngine {
     }
 
     private func computeInsights() async -> InsightsSnapshot {
-        let topMovies = fetchTopMovies(limit: topLimit)
-        let recentMovies = fetchRecentMovies(limit: recentLimit)
-        let combined = dedupe(topMovies + recentMovies)
+        let comparedMovies = fetchComparedMovies(limit: comparedLimit)
+        let fallback = dedupe(fetchTopMovies(limit: topLimit) + fetchRecentMovies(limit: recentLimit))
+        let candidateMovies = comparedMovies.isEmpty ? fallback : comparedMovies
 
-        for movie in combined.prefix(detailsFetchLimit) {
+        let events = fetchComparisonEvents()
+        let comparisonStats = buildComparisonStats(from: events)
+
+        let profileStore = TasteProfileStore(context: context)
+        let profile = profileStore.fetchProfile()
+        let tasteSnapshot = TasteProfileSnapshot(mu: profile.mu, confidence: profileStore.confidence(for: profile))
+
+        if events.isEmpty {
+            let personality = personalityPresenter.present(
+                profile: profile,
+                favoriteGenres: [],
+                favoriteKeywords: [],
+                favoriteDirectors: [],
+                favoriteActors: []
+            )
+            return InsightsSnapshot(
+                favoriteGenres: [],
+                favoriteActors: [],
+                favoriteDirectors: [],
+                favoriteKeywords: [],
+                rubricInsights: [],
+                personality: personality,
+                sourceMovieCount: 0,
+                sourcePickCount: 0,
+                detailsCoverage: 0
+            )
+        }
+
+        let vectorMap = TasteVectorStore(context: context).vectorMap(for: candidateMovies)
+        let scorer = InsightsScorer(
+            now: Date(),
+            tasteProfile: tasteSnapshot,
+            vectors: vectorMap,
+            comparisonStats: comparisonStats
+        )
+        let signalsById = scorer.signals(for: candidateMovies)
+
+        let detailTargets = candidateMovies
+            .compactMap { movie -> (Movie, Double)? in
+                guard let signal = signalsById[movie.tmdbID], signal.score > 0 else { return nil }
+                return (movie, signal.score * signal.weight)
+            }
+            .sorted { $0.1 > $1.1 }
+
+        let detailSelection = detailTargets.isEmpty
+            ? candidateMovies.map { ($0, 0.0) }
+            : detailTargets
+        for (movie, _) in detailSelection.prefix(detailsFetchLimit) {
             await detailsService.ensureDetails(for: movie)
         }
 
-        var genreCounts: [String: Double] = [:]
-        var actorCounts: [String: Double] = [:]
-        var directorCounts: [String: Double] = [:]
-        var keywordCounts: [String: Double] = [:]
+        let detailsCoverage = candidateMovies.isEmpty
+            ? 0
+            : Double(candidateMovies.filter { $0.details != nil }.count) / Double(candidateMovies.count)
 
-        for movie in combined {
-            for genre in movie.genreNames {
-                genreCounts[genre, default: 0] += 1
+        var genreStats: [String: TagStats] = [:]
+        var actorStats: [String: TagStats] = [:]
+        var directorStats: [String: TagStats] = [:]
+        var keywordStats: [String: TagStats] = [:]
+
+        var genreGlobals: [String: Double] = [:]
+        var actorGlobals: [String: Double] = [:]
+        var directorGlobals: [String: Double] = [:]
+        var keywordGlobals: [String: Double] = [:]
+
+        var genreNames: [String: String] = [:]
+        var actorNames: [String: String] = [:]
+        var directorNames: [String: String] = [:]
+        var keywordNames: [String: String] = [:]
+
+        for movie in candidateMovies {
+            guard let signal = signalsById[movie.tmdbID] else { continue }
+            let genres = movie.genreNames
+            let genreWeight = 1.0 / Double(max(1, genres.count))
+            for genre in genres {
+                InsightsScorer.addTag(
+                    key: genre,
+                    displayName: genre,
+                    weight: genreWeight,
+                    signal: signal,
+                    stats: &genreStats,
+                    displayNames: &genreNames
+                )
             }
 
             if let details = movie.details {
-                for castMember in details.cast.sorted(by: { $0.order < $1.order }).prefix(3) {
-                    actorCounts[castMember.name, default: 0] += 1
+                for castMember in details.cast.sorted(by: { $0.order < $1.order }).prefix(5) {
+                    let weight = 1.0 / Double(max(1, castMember.order + 1))
+                    InsightsScorer.addTag(
+                        key: castMember.name,
+                        displayName: castMember.name,
+                        weight: weight,
+                        signal: signal,
+                        stats: &actorStats,
+                        displayNames: &actorNames
+                    )
                 }
                 for crewMember in details.crew where crewMember.job == "Director" {
-                    directorCounts[crewMember.name, default: 0] += 1
+                    InsightsScorer.addTag(
+                        key: crewMember.name,
+                        displayName: crewMember.name,
+                        weight: 1.0,
+                        signal: signal,
+                        stats: &directorStats,
+                        displayNames: &directorNames
+                    )
                 }
                 for keyword in details.keywords {
-                    keywordCounts[keyword, default: 0] += 1
+                    guard let normalized = normalizedKeyword(keyword) else { continue }
+                    InsightsScorer.addTag(
+                        key: normalized,
+                        displayName: displayKeyword(normalized),
+                        weight: keywordWeight,
+                        signal: signal,
+                        stats: &keywordStats,
+                        displayNames: &keywordNames
+                    )
                 }
             }
         }
 
-        let rubricInsights = computeRubricInsights(from: combined)
+        let allMovies = fetchAllMovies()
+        for movie in allMovies {
+            let genres = movie.genreNames
+            let genreWeight = 1.0 / Double(max(1, genres.count))
+            for genre in genres {
+                InsightsScorer.addGlobalTag(
+                    key: genre,
+                    displayName: genre,
+                    weight: genreWeight,
+                    global: &genreGlobals,
+                    displayNames: &genreNames
+                )
+            }
+        }
+
+        let detailPool = allMovies.filter { $0.details != nil }
+        for movie in detailPool {
+            guard let details = movie.details else { continue }
+            for castMember in details.cast.sorted(by: { $0.order < $1.order }).prefix(5) {
+                let weight = 1.0 / Double(max(1, castMember.order + 1))
+                InsightsScorer.addGlobalTag(
+                    key: castMember.name,
+                    displayName: castMember.name,
+                    weight: weight,
+                    global: &actorGlobals,
+                    displayNames: &actorNames
+                )
+            }
+            for crewMember in details.crew where crewMember.job == "Director" {
+                InsightsScorer.addGlobalTag(
+                    key: crewMember.name,
+                    displayName: crewMember.name,
+                    weight: 1.0,
+                    global: &directorGlobals,
+                    displayNames: &directorNames
+                )
+            }
+            for keyword in details.keywords {
+                guard let normalized = normalizedKeyword(keyword) else { continue }
+                InsightsScorer.addGlobalTag(
+                    key: normalized,
+                    displayName: displayKeyword(normalized),
+                    weight: keywordWeight,
+                    global: &keywordGlobals,
+                    displayNames: &keywordNames
+                )
+            }
+        }
+
+        let favoriteGenres = InsightsScorer.rankMetrics(
+            stats: genreStats,
+            global: genreGlobals,
+            displayNames: genreNames,
+            limit: 5,
+            minSupport: minGenreSupport,
+            minScore: minTagScore
+        )
+        let favoriteActors = InsightsScorer.rankMetrics(
+            stats: actorStats,
+            global: actorGlobals,
+            displayNames: actorNames,
+            limit: 5,
+            minSupport: minPeopleSupport,
+            minScore: minTagScore
+        )
+        let favoriteDirectors = InsightsScorer.rankMetrics(
+            stats: directorStats,
+            global: directorGlobals,
+            displayNames: directorNames,
+            limit: 5,
+            minSupport: minPeopleSupport,
+            minScore: minTagScore
+        )
+        let favoriteKeywords = InsightsScorer.rankMetrics(
+            stats: keywordStats,
+            global: keywordGlobals,
+            displayNames: keywordNames,
+            limit: 5,
+            minSupport: minKeywordSupport,
+            minScore: minTagScore
+        )
+
+        let rubricInsights = computeRubricInsights(from: candidateMovies, signalsById: signalsById)
         let personality = personalityPresenter.present(
-            profile: TasteProfileStore(context: context).fetchProfile(),
-            favoriteGenres: topMetrics(from: genreCounts),
-            favoriteKeywords: topMetrics(from: keywordCounts),
-            favoriteDirectors: topMetrics(from: directorCounts),
-            favoriteActors: topMetrics(from: actorCounts)
+            profile: profile,
+            favoriteGenres: favoriteGenres,
+            favoriteKeywords: favoriteKeywords,
+            favoriteDirectors: favoriteDirectors,
+            favoriteActors: favoriteActors
         )
 
         return InsightsSnapshot(
-            favoriteGenres: topMetrics(from: genreCounts),
-            favoriteActors: topMetrics(from: actorCounts),
-            favoriteDirectors: topMetrics(from: directorCounts),
-            favoriteKeywords: topMetrics(from: keywordCounts),
+            favoriteGenres: favoriteGenres,
+            favoriteActors: favoriteActors,
+            favoriteDirectors: favoriteDirectors,
+            favoriteKeywords: favoriteKeywords,
             rubricInsights: rubricInsights,
-            personality: personality
+            personality: personality,
+            sourceMovieCount: candidateMovies.count,
+            sourcePickCount: events.count,
+            detailsCoverage: detailsCoverage
         )
     }
 
@@ -125,6 +333,40 @@ final class InsightsEngine {
         }
     }
 
+    private func fetchComparedMovies(limit: Int) -> [Movie] {
+        var descriptor = FetchDescriptor<Movie>(
+            predicate: #Predicate { $0.comparisonsCount > 0 },
+            sortBy: [SortDescriptor(\.comparisonsCount, order: .reverse)]
+        )
+        descriptor.fetchLimit = limit
+        do {
+            return try context.fetch(descriptor)
+        } catch {
+            return []
+        }
+    }
+
+    private func fetchAllMovies() -> [Movie] {
+        let descriptor = FetchDescriptor<Movie>()
+        do {
+            return try context.fetch(descriptor)
+        } catch {
+            return []
+        }
+    }
+
+    private func fetchComparisonEvents() -> [ComparisonEvent] {
+        var descriptor = FetchDescriptor<ComparisonEvent>(
+            predicate: #Predicate { $0.selectedMovieID != nil },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        do {
+            return try context.fetch(descriptor)
+        } catch {
+            return []
+        }
+    }
+
     private func dedupe(_ movies: [Movie]) -> [Movie] {
         var seen = Set<Int>()
         var result: [Movie] = []
@@ -136,17 +378,20 @@ final class InsightsEngine {
         return result
     }
 
-    private func topMetrics(from counts: [String: Double]) -> [NamedMetric] {
-        let metrics = counts.map { NamedMetric(name: $0.key, score: $0.value) }
-        let sorted = metrics.sorted { $0.score == $1.score ? $0.name < $1.name : $0.score > $1.score }
-        return Array(sorted.prefix(5))
-    }
+    private func computeRubricInsights(
+        from movies: [Movie],
+        signalsById: [Int: MoviePreferenceSignal]
+    ) -> [String] {
+        let weightedRatings: [(RubricRatings, Double)] = movies.compactMap { movie in
+            guard let ratings = movie.rubricRatings else { return nil }
+            guard let signal = signalsById[movie.tmdbID] else { return nil }
+            let weight = max(0, signal.score) * signal.weight
+            guard weight > 0 else { return nil }
+            return (ratings, weight)
+        }
+        guard weightedRatings.count >= 5 else { return [] }
 
-    private func computeRubricInsights(from movies: [Movie]) -> [String] {
-        let ratings = movies.compactMap { $0.rubricRatings }
-        guard ratings.count >= 5 else { return [] }
-
-        let averages = RubricAverages(from: ratings)
+        let averages = RubricAverages(from: weightedRatings)
         var insights: [String] = []
 
         if let insight = rubricInsight(label: "Story", average: averages.story) {
@@ -169,6 +414,47 @@ final class InsightsEngine {
         }
 
         return Array(insights.prefix(3))
+    }
+
+    private func buildComparisonStats(from events: [ComparisonEvent]) -> [Int: MovieComparisonStats] {
+        var stats: [Int: MovieComparisonStats] = [:]
+        for event in events {
+            guard let selected = event.selectedMovieID else { continue }
+            let left = event.leftMovieID
+            let right = event.rightMovieID
+            let winner = selected
+            let loser = selected == left ? right : left
+            let timestamp = event.createdAt
+
+            var winnerStats = stats[winner] ?? MovieComparisonStats()
+            winnerStats.wins += 1
+            winnerStats.lastComparedAt = maxDate(winnerStats.lastComparedAt, timestamp)
+            stats[winner] = winnerStats
+
+            var loserStats = stats[loser] ?? MovieComparisonStats()
+            loserStats.losses += 1
+            loserStats.lastComparedAt = maxDate(loserStats.lastComparedAt, timestamp)
+            stats[loser] = loserStats
+        }
+        return stats
+    }
+
+    private func normalizedKeyword(_ keyword: String) -> String? {
+        let normalized = keyword.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !normalized.isEmpty else { return nil }
+        guard normalized.count >= 3 else { return nil }
+        guard normalized.rangeOfCharacter(from: .letters) != nil else { return nil }
+        guard !keywordStoplist.contains(normalized) else { return nil }
+        return normalized
+    }
+
+    private func displayKeyword(_ normalized: String) -> String {
+        normalized.capitalized
+    }
+
+    private func maxDate(_ lhs: Date?, _ rhs: Date) -> Date {
+        guard let lhs else { return rhs }
+        return max(lhs, rhs)
     }
 
     private func rubricInsight(label: String, average: Double) -> String? {
@@ -198,6 +484,9 @@ final class InsightsEngine {
         let favoriteKeywords: [NamedMetric]
         let rubricInsights: [String]
         let personality: TastePersonalitySnapshot
+        let sourceMovieCount: Int
+        let sourcePickCount: Int
+        let detailsCoverage: Double
     }
 
     private struct RubricAverages {
@@ -208,14 +497,24 @@ final class InsightsEngine {
         let acting: Double
         let sound: Double
 
-        init(from ratings: [RubricRatings]) {
-            let count = Double(ratings.count)
-            story = ratings.map(\.story).reduce(0, +) / count
-            action = ratings.map(\.action).reduce(0, +) / count
-            visuals = ratings.map(\.visuals).reduce(0, +) / count
-            dialogue = ratings.map(\.dialogue).reduce(0, +) / count
-            acting = ratings.map(\.acting).reduce(0, +) / count
-            sound = ratings.map(\.sound).reduce(0, +) / count
+        init(from ratings: [(RubricRatings, Double)]) {
+            let totalWeight = ratings.map(\.1).reduce(0, +)
+            guard totalWeight > 0 else {
+                story = 0
+                action = 0
+                visuals = 0
+                dialogue = 0
+                acting = 0
+                sound = 0
+                return
+            }
+
+            story = ratings.reduce(0) { $0 + $1.0.story * $1.1 } / totalWeight
+            action = ratings.reduce(0) { $0 + $1.0.action * $1.1 } / totalWeight
+            visuals = ratings.reduce(0) { $0 + $1.0.visuals * $1.1 } / totalWeight
+            dialogue = ratings.reduce(0) { $0 + $1.0.dialogue * $1.1 } / totalWeight
+            acting = ratings.reduce(0) { $0 + $1.0.acting * $1.1 } / totalWeight
+            sound = ratings.reduce(0) { $0 + $1.0.sound * $1.1 } / totalWeight
         }
     }
 
