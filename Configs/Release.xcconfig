@@ -1,0 +1,3 @@
+#include? "../Secrets.xcconfig"
+
+TMDB_API_KEY = $(inherited)
