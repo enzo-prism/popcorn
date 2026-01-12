@@ -6,6 +6,7 @@ struct RefreshMomentSheet: View {
     let personality: TastePersonalitySnapshot?
     let pickCount: Int
     let interval: Int
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ScrollView {
@@ -15,7 +16,7 @@ struct RefreshMomentSheet: View {
 
                 if !topMovies.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Top 10 right now")
+                        Label("Top 10 right now", systemImage: "list.number")
                             .font(.headline)
                         ForEach(Array(topMovies.prefix(10).enumerated()), id: \.element.id) { index, movie in
                             MovieRowView(rank: index + 1, movie: movie)
@@ -25,7 +26,7 @@ struct RefreshMomentSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("New insight")
+                    Label("New insight", systemImage: "lightbulb")
                         .font(.headline)
                     Text(insightSummary)
                         .font(.subheadline)
@@ -34,7 +35,7 @@ struct RefreshMomentSheet: View {
                 .glassSurface(cornerRadius: 18, padding: EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Movie personality")
+                    Label("Movie personality", systemImage: "brain.head.profile")
                         .font(.headline)
                     if let personality {
                         Text(personality.isReady ? personality.title : "Developing Profile")
@@ -72,7 +73,7 @@ struct RefreshMomentSheet: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Fresh signals")
+            Label("Fresh signals", systemImage: "sparkles")
                 .font(.title2.bold())
             Text("Based on your latest \(pickCount) picks.")
                 .font(.subheadline)
@@ -109,11 +110,11 @@ struct RefreshMomentSheet: View {
     }
 
     private var backgroundLayer: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.97, green: 0.96, blue: 0.94),
-                Color(red: 0.92, green: 0.94, blue: 0.98)
-            ],
+        let colors = colorScheme == .dark
+            ? [Color(red: 0.10, green: 0.09, blue: 0.12), Color(red: 0.06, green: 0.08, blue: 0.12)]
+            : [Color(red: 0.97, green: 0.96, blue: 0.94), Color(red: 0.92, green: 0.94, blue: 0.98)]
+        return LinearGradient(
+            colors: colors,
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

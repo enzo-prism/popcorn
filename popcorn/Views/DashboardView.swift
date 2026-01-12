@@ -3,6 +3,7 @@ import SwiftData
 
 struct DashboardView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Query(sort: \Movie.eloRating, order: .reverse) private var movies: [Movie]
     @Query(sort: \ComparisonEvent.createdAt, order: .reverse) private var events: [ComparisonEvent]
     @Query private var tasteProfiles: [UserTasteProfile]
@@ -14,7 +15,7 @@ struct DashboardView: View {
 
     var body: some View {
         List {
-            Section("Top Movies") {
+            Section {
                 if movies.isEmpty {
                     Text("Pick a few movies to build your ranking.")
                         .foregroundStyle(.secondary)
@@ -28,28 +29,32 @@ struct DashboardView: View {
                     }
 
                     if movies.count > 10 {
-                        Button(showTop100 ? "Show Top 10" : "Show Top 100") {
+                        Button {
                             showTop100.toggle()
+                        } label: {
+                            Label(showTop100 ? "Show Top 10" : "Show Top 100", systemImage: "list.number")
                         }
                         .foregroundStyle(.primary)
                     }
                 }
+            } header: {
+                Label("Top Movies", systemImage: "film.stack")
             }
 
-            Section("Insights") {
+            Section {
                 if isRefreshingInsights {
                     ProgressView("Updating insights…")
                 }
 
                 if let insightsCache {
-                    insightBlock(title: "Favorite genres", items: insightsCache.favoriteGenres)
-                    insightBlock(title: "Favorite actors", items: insightsCache.favoriteActors)
-                    insightBlock(title: "Favorite directors", items: insightsCache.favoriteDirectors)
-                    insightBlock(title: "Favorite themes", items: insightsCache.favoriteKeywords)
+                    insightBlock(title: "Favorite genres", systemImage: "theatermasks", items: insightsCache.favoriteGenres)
+                    insightBlock(title: "Favorite actors", systemImage: "person.2.fill", items: insightsCache.favoriteActors)
+                    insightBlock(title: "Favorite directors", systemImage: "video.fill", items: insightsCache.favoriteDirectors)
+                    insightBlock(title: "Favorite themes", systemImage: "tag.fill", items: insightsCache.favoriteKeywords)
 
                     if !insightsCache.rubricInsights.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Rubric notes")
+                            Label("Rubric notes", systemImage: "slider.horizontal.3")
                                 .font(.subheadline.weight(.semibold))
                             ForEach(insightsCache.rubricInsights, id: \.self) { insight in
                                 Text("• \(insight)")
@@ -63,9 +68,11 @@ struct DashboardView: View {
                     Text("Keep picking to unlock insights about your taste.")
                         .foregroundStyle(.secondary)
                 }
+            } header: {
+                Label("Insights", systemImage: "chart.bar.xaxis")
             }
 
-            Section("Movie Personality") {
+            Section {
                 if let personalitySnapshot {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -74,8 +81,10 @@ struct DashboardView: View {
 
                             Spacer()
 
-                            Button("How this works") {
+                            Button {
                                 showPersonalityInfo = true
+                            } label: {
+                                Label("How this works", systemImage: "info.circle")
                             }
                             .font(.caption.weight(.semibold))
                         }
@@ -94,7 +103,7 @@ struct DashboardView: View {
                         }
 
                         HStack {
-                            Text("Confidence")
+                            Label("Confidence", systemImage: "gauge")
                                 .font(.caption.weight(.semibold))
                             ProgressView(value: personalitySnapshot.confidence)
                                 .tint(.primary)
@@ -124,6 +133,8 @@ struct DashboardView: View {
                     Text("Your movie personality will appear after more picks.")
                         .foregroundStyle(.secondary)
                 }
+            } header: {
+                Label("Movie Personality", systemImage: "brain.head.profile")
             }
         }
         .navigationTitle("Dashboard")
@@ -143,10 +154,10 @@ struct DashboardView: View {
     }
 
     @ViewBuilder
-    private func insightBlock(title: String, items: [NamedMetric]) -> some View {
+    private func insightBlock(title: String, systemImage: String, items: [NamedMetric]) -> some View {
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
-                Text(title)
+                Label(title, systemImage: systemImage)
                     .font(.subheadline.weight(.semibold))
                 ForEach(items, id: \.name) { item in
                     Text("• \(item.name)")
@@ -180,11 +191,11 @@ struct DashboardView: View {
     }
 
     private var backgroundLayer: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.95, green: 0.96, blue: 0.98),
-                Color(red: 0.92, green: 0.94, blue: 0.90)
-            ],
+        let colors = colorScheme == .dark
+            ? [Color(red: 0.10, green: 0.11, blue: 0.14), Color(red: 0.07, green: 0.09, blue: 0.11)]
+            : [Color(red: 0.95, green: 0.96, blue: 0.98), Color(red: 0.92, green: 0.94, blue: 0.90)]
+        return LinearGradient(
+            colors: colors,
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

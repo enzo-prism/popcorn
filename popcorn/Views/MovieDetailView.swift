@@ -3,6 +3,7 @@ import SwiftData
 
 struct MovieDetailView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Bindable var movie: Movie
     let rank: Int
 
@@ -23,8 +24,8 @@ struct MovieDetailView: View {
                 }
 
                 HStack(spacing: 16) {
-                    badge(text: "Rank #\(rank)")
-                    badge(text: "Elo \(Int(movie.eloRating))")
+                    badge(text: "Rank #\(rank)", systemImage: "trophy.fill")
+                    badge(text: "Elo \(Int(movie.eloRating))", systemImage: "chart.line.uptrend.xyaxis")
                 }
 
                 if !movie.overview.isEmpty {
@@ -33,7 +34,7 @@ struct MovieDetailView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Your Rubric")
+                    Label("Your Rubric", systemImage: "slider.horizontal.3")
                         .font(.headline)
 
                     RubricSlider(title: "Story", value: $ratings.story)
@@ -94,8 +95,8 @@ struct MovieDetailView: View {
         return TMDbImageURL.posterURL(path: path)
     }
 
-    private func badge(text: String) -> some View {
-        Text(text)
+    private func badge(text: String, systemImage: String) -> some View {
+        Label(text, systemImage: systemImage)
             .font(.subheadline.weight(.semibold))
             .glassSurface(cornerRadius: 16, padding: EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10))
             .clipShape(Capsule())
@@ -110,11 +111,11 @@ struct MovieDetailView: View {
     }
 
     private var backgroundLayer: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.98, green: 0.96, blue: 0.94),
-                Color(red: 0.92, green: 0.94, blue: 0.98)
-            ],
+        let colors = colorScheme == .dark
+            ? [Color(red: 0.10, green: 0.09, blue: 0.12), Color(red: 0.06, green: 0.08, blue: 0.12)]
+            : [Color(red: 0.98, green: 0.96, blue: 0.94), Color(red: 0.92, green: 0.94, blue: 0.98)]
+        return LinearGradient(
+            colors: colors,
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

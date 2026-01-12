@@ -13,141 +13,231 @@ final class EloRankerTests: XCTestCase {
 final class DesignContrastTests: XCTestCase {
     private let minimumPrimaryContrast: Double = 4.5
     private let minimumSecondaryContrast: Double = 3.0
+    private let glassMaterialAlpha: Double = 0.28
+    private let reducedTransparencyAlpha: Double = 0.9
 
-    func testPrimaryContrastOnPickBackground() {
-        assertContrastOnGradient(
-            name: "Pick",
-            start: color(0.97, 0.95, 0.92),
-            end: color(0.90, 0.94, 0.98),
-            foreground: resolved(.label),
+    private struct GradientSpec {
+        let name: String
+        let lightStart: UIColor
+        let lightEnd: UIColor
+        let darkStart: UIColor
+        let darkEnd: UIColor
+
+        func startEnd(for style: UIUserInterfaceStyle) -> (UIColor, UIColor) {
+            if style == .dark {
+                return (darkStart, darkEnd)
+            }
+            return (lightStart, lightEnd)
+        }
+    }
+
+    private var gradientSpecs: [GradientSpec] {
+        [
+            GradientSpec(
+                name: "Pick",
+                lightStart: color(0.97, 0.95, 0.92),
+                lightEnd: color(0.90, 0.94, 0.98),
+                darkStart: color(0.09, 0.10, 0.12),
+                darkEnd: color(0.05, 0.08, 0.12)
+            ),
+            GradientSpec(
+                name: "Dashboard",
+                lightStart: color(0.95, 0.96, 0.98),
+                lightEnd: color(0.92, 0.94, 0.90),
+                darkStart: color(0.10, 0.11, 0.14),
+                darkEnd: color(0.07, 0.09, 0.11)
+            ),
+            GradientSpec(
+                name: "Settings",
+                lightStart: color(0.95, 0.97, 0.98),
+                lightEnd: color(0.93, 0.94, 0.90),
+                darkStart: color(0.09, 0.10, 0.12),
+                darkEnd: color(0.06, 0.08, 0.10)
+            ),
+            GradientSpec(
+                name: "RefreshMoment",
+                lightStart: color(0.97, 0.96, 0.94),
+                lightEnd: color(0.92, 0.94, 0.98),
+                darkStart: color(0.10, 0.09, 0.12),
+                darkEnd: color(0.06, 0.08, 0.12)
+            ),
+            GradientSpec(
+                name: "MovieDetail",
+                lightStart: color(0.98, 0.96, 0.94),
+                lightEnd: color(0.92, 0.94, 0.98),
+                darkStart: color(0.10, 0.09, 0.12),
+                darkEnd: color(0.06, 0.08, 0.12)
+            ),
+            GradientSpec(
+                name: "PersonalityInfo",
+                lightStart: color(0.96, 0.95, 0.93),
+                lightEnd: color(0.92, 0.95, 0.99),
+                darkStart: color(0.10, 0.09, 0.12),
+                darkEnd: color(0.06, 0.08, 0.12)
+            )
+        ]
+    }
+
+    func testPrimaryContrastAcrossLightModeBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .light,
+            contrast: .normal,
+            foreground: .label,
             minimum: minimumPrimaryContrast
         )
     }
 
-    func testSecondaryContrastOnPickBackground() {
-        assertContrastOnGradient(
-            name: "Pick",
-            start: color(0.97, 0.95, 0.92),
-            end: color(0.90, 0.94, 0.98),
-            foreground: resolved(.secondaryLabel),
+    func testSecondaryContrastAcrossLightModeBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .light,
+            contrast: .normal,
+            foreground: .secondaryLabel,
             minimum: minimumSecondaryContrast
         )
     }
 
-    func testPrimaryContrastOnDashboardBackground() {
-        assertContrastOnGradient(
-            name: "Dashboard",
-            start: color(0.95, 0.96, 0.98),
-            end: color(0.92, 0.94, 0.90),
-            foreground: resolved(.label),
+    func testPrimaryContrastAcrossDarkModeBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .dark,
+            contrast: .normal,
+            foreground: .label,
             minimum: minimumPrimaryContrast
         )
     }
 
-    func testSecondaryContrastOnDashboardBackground() {
-        assertContrastOnGradient(
-            name: "Dashboard",
-            start: color(0.95, 0.96, 0.98),
-            end: color(0.92, 0.94, 0.90),
-            foreground: resolved(.secondaryLabel),
+    func testSecondaryContrastAcrossDarkModeBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .dark,
+            contrast: .normal,
+            foreground: .secondaryLabel,
             minimum: minimumSecondaryContrast
         )
     }
 
-    func testPrimaryContrastOnSettingsBackground() {
-        assertContrastOnGradient(
-            name: "Settings",
-            start: color(0.95, 0.97, 0.98),
-            end: color(0.93, 0.94, 0.90),
-            foreground: resolved(.label),
+    func testPrimaryContrastAcrossLightModeHighContrastBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .light,
+            contrast: .high,
+            foreground: .label,
             minimum: minimumPrimaryContrast
         )
     }
 
-    func testSecondaryContrastOnSettingsBackground() {
-        assertContrastOnGradient(
-            name: "Settings",
-            start: color(0.95, 0.97, 0.98),
-            end: color(0.93, 0.94, 0.90),
-            foreground: resolved(.secondaryLabel),
+    func testSecondaryContrastAcrossLightModeHighContrastBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .light,
+            contrast: .high,
+            foreground: .secondaryLabel,
             minimum: minimumSecondaryContrast
         )
     }
 
-    func testPrimaryContrastOnRefreshMomentBackground() {
-        assertContrastOnGradient(
-            name: "RefreshMoment",
-            start: color(0.97, 0.96, 0.94),
-            end: color(0.92, 0.94, 0.98),
-            foreground: resolved(.label),
+    func testPrimaryContrastAcrossDarkModeHighContrastBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .dark,
+            contrast: .high,
+            foreground: .label,
             minimum: minimumPrimaryContrast
         )
     }
 
-    func testSecondaryContrastOnRefreshMomentBackground() {
-        assertContrastOnGradient(
-            name: "RefreshMoment",
-            start: color(0.97, 0.96, 0.94),
-            end: color(0.92, 0.94, 0.98),
-            foreground: resolved(.secondaryLabel),
+    func testSecondaryContrastAcrossDarkModeHighContrastBackgrounds() {
+        assertContrastAcrossBackgrounds(
+            style: .dark,
+            contrast: .high,
+            foreground: .secondaryLabel,
             minimum: minimumSecondaryContrast
         )
     }
 
-    func testPrimaryContrastOnMovieDetailBackground() {
-        assertContrastOnGradient(
-            name: "MovieDetail",
-            start: color(0.98, 0.96, 0.94),
-            end: color(0.92, 0.94, 0.98),
-            foreground: resolved(.label),
-            minimum: minimumPrimaryContrast
+    func testGlassSurfaceContrastLightMode() {
+        assertGlassSurfaceContrast(
+            style: .light,
+            contrast: .normal,
+            alpha: glassMaterialAlpha
         )
     }
 
-    func testSecondaryContrastOnMovieDetailBackground() {
-        assertContrastOnGradient(
-            name: "MovieDetail",
-            start: color(0.98, 0.96, 0.94),
-            end: color(0.92, 0.94, 0.98),
-            foreground: resolved(.secondaryLabel),
-            minimum: minimumSecondaryContrast
+    func testGlassSurfaceContrastDarkMode() {
+        assertGlassSurfaceContrast(
+            style: .dark,
+            contrast: .normal,
+            alpha: glassMaterialAlpha
         )
     }
 
-    func testPrimaryContrastOnPersonalityInfoBackground() {
-        assertContrastOnGradient(
-            name: "PersonalityInfo",
-            start: color(0.96, 0.95, 0.93),
-            end: color(0.92, 0.95, 0.99),
-            foreground: resolved(.label),
-            minimum: minimumPrimaryContrast
+    func testGlassSurfaceContrastLightModeHighContrast() {
+        assertGlassSurfaceContrast(
+            style: .light,
+            contrast: .high,
+            alpha: glassMaterialAlpha
         )
     }
 
-    func testSecondaryContrastOnPersonalityInfoBackground() {
-        assertContrastOnGradient(
-            name: "PersonalityInfo",
-            start: color(0.96, 0.95, 0.93),
-            end: color(0.92, 0.95, 0.99),
-            foreground: resolved(.secondaryLabel),
-            minimum: minimumSecondaryContrast
+    func testGlassSurfaceContrastDarkModeHighContrast() {
+        assertGlassSurfaceContrast(
+            style: .dark,
+            contrast: .high,
+            alpha: glassMaterialAlpha
         )
     }
 
-    func testMovieCardScrimContrast() {
+    func testReducedTransparencyGlassSurfaceContrastLightMode() {
+        assertGlassSurfaceContrast(
+            style: .light,
+            contrast: .normal,
+            alpha: reducedTransparencyAlpha
+        )
+    }
+
+    func testReducedTransparencyGlassSurfaceContrastDarkMode() {
+        assertGlassSurfaceContrast(
+            style: .dark,
+            contrast: .normal,
+            alpha: reducedTransparencyAlpha
+        )
+    }
+
+    func testMovieCardScrimContrastOnBrightPoster() {
         let base = UIColor.white
-        let scrim = blend(foreground: .black, background: base, alpha: 0.65)
+        let scrim = blend(foreground: .black, background: base, alpha: 0.65, style: .light, contrast: .normal)
 
         assertContrast(
             name: "MovieCard title",
             foreground: UIColor.white,
             background: scrim,
+            style: .light,
+            contrast: .normal,
             minimum: minimumPrimaryContrast
         )
         assertContrast(
             name: "MovieCard subtitle",
             foreground: UIColor(white: 0.85, alpha: 1),
             background: scrim,
+            style: .light,
+            contrast: .normal,
+            minimum: minimumSecondaryContrast
+        )
+    }
+
+    func testMovieCardScrimContrastOnMidPoster() {
+        let base = UIColor(white: 0.7, alpha: 1)
+        let scrim = blend(foreground: .black, background: base, alpha: 0.65, style: .light, contrast: .normal)
+
+        assertContrast(
+            name: "MovieCard title mid poster",
+            foreground: UIColor.white,
+            background: scrim,
+            style: .light,
+            contrast: .normal,
+            minimum: minimumPrimaryContrast
+        )
+        assertContrast(
+            name: "MovieCard subtitle mid poster",
+            foreground: UIColor(white: 0.85, alpha: 1),
+            background: scrim,
+            style: .light,
+            contrast: .normal,
             minimum: minimumSecondaryContrast
         )
     }
@@ -160,36 +250,75 @@ final class DesignContrastTests: XCTestCase {
             name: "TMDb logo light stop",
             foreground: UIColor.white,
             background: lightStop,
+            style: .light,
+            contrast: .normal,
             minimum: minimumPrimaryContrast
         )
         assertContrast(
             name: "TMDb logo dark stop",
             foreground: UIColor.white,
             background: darkStop,
+            style: .light,
+            contrast: .normal,
             minimum: minimumPrimaryContrast
         )
     }
 
-    func testReducedTransparencyGlassSurfaceContrast() {
-        let baseBackground = color(0.95, 0.96, 0.98)
-        let material = blend(
-            foreground: resolved(.systemBackground),
-            background: baseBackground,
-            alpha: 0.9
-        )
+    private func assertContrastAcrossBackgrounds(
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast,
+        foreground: UIColor,
+        minimum: Double
+    ) {
+        for spec in gradientSpecs {
+            let (start, end) = spec.startEnd(for: style)
+            assertContrastOnGradient(
+                name: spec.name,
+                start: start,
+                end: end,
+                foreground: foreground,
+                style: style,
+                contrast: contrast,
+                minimum: minimum
+            )
+        }
+    }
 
-        assertContrast(
-            name: "Glass surface primary",
-            foreground: resolved(.label),
-            background: material,
-            minimum: minimumPrimaryContrast
-        )
-        assertContrast(
-            name: "Glass surface secondary",
-            foreground: resolved(.secondaryLabel),
-            background: material,
-            minimum: minimumSecondaryContrast
-        )
+    private func assertGlassSurfaceContrast(
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast,
+        alpha: Double
+    ) {
+        for spec in gradientSpecs {
+            let (start, end) = spec.startEnd(for: style)
+            let stops = [start, midpoint(start, end), end]
+            for (index, stop) in stops.enumerated() {
+                let material = blend(
+                    foreground: .systemBackground,
+                    background: stop,
+                    alpha: alpha,
+                    style: style,
+                    contrast: contrast
+                )
+
+                assertContrast(
+                    name: "\(spec.name) glass primary stop \(index)",
+                    foreground: .label,
+                    background: material,
+                    style: style,
+                    contrast: contrast,
+                    minimum: minimumPrimaryContrast
+                )
+                assertContrast(
+                    name: "\(spec.name) glass secondary stop \(index)",
+                    foreground: .secondaryLabel,
+                    background: material,
+                    style: style,
+                    contrast: contrast,
+                    minimum: minimumSecondaryContrast
+                )
+            }
+        }
     }
 
     private func assertContrastOnGradient(
@@ -197,11 +326,18 @@ final class DesignContrastTests: XCTestCase {
         start: UIColor,
         end: UIColor,
         foreground: UIColor,
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast,
         minimum: Double
     ) {
         let stops = [start, midpoint(start, end), end]
         for (index, stop) in stops.enumerated() {
-            let ratio = contrastRatio(foreground: foreground, background: stop)
+            let ratio = contrastRatio(
+                foreground: foreground,
+                background: stop,
+                style: style,
+                contrast: contrast
+            )
             XCTAssertGreaterThanOrEqual(
                 ratio,
                 minimum,
@@ -210,21 +346,42 @@ final class DesignContrastTests: XCTestCase {
         }
     }
 
-    private func assertContrast(name: String, foreground: UIColor, background: UIColor, minimum: Double) {
-        let ratio = contrastRatio(foreground: foreground, background: background)
+    private func assertContrast(
+        name: String,
+        foreground: UIColor,
+        background: UIColor,
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast,
+        minimum: Double
+    ) {
+        let ratio = contrastRatio(
+            foreground: foreground,
+            background: background,
+            style: style,
+            contrast: contrast
+        )
         XCTAssertGreaterThanOrEqual(ratio, minimum, "\(name) contrast \(ratio) is below \(minimum).")
     }
 
-    private func contrastRatio(foreground: UIColor, background: UIColor) -> Double {
-        let l1 = luminance(for: foreground)
-        let l2 = luminance(for: background)
+    private func contrastRatio(
+        foreground: UIColor,
+        background: UIColor,
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast
+    ) -> Double {
+        let l1 = luminance(for: foreground, style: style, contrast: contrast)
+        let l2 = luminance(for: background, style: style, contrast: contrast)
         let light = max(l1, l2)
         let dark = min(l1, l2)
         return (light + 0.05) / (dark + 0.05)
     }
 
-    private func luminance(for color: UIColor) -> Double {
-        let resolvedColor = resolved(color)
+    private func luminance(
+        for color: UIColor,
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast
+    ) -> Double {
+        let resolvedColor = resolved(color, style: style, contrast: contrast)
         var red: CGFloat = 0
         var green: CGFloat = 0
         var blue: CGFloat = 0
@@ -269,18 +426,26 @@ final class DesignContrastTests: XCTestCase {
         UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 
-    private func blend(foreground: UIColor, background: UIColor, alpha: Double) -> UIColor {
+    private func blend(
+        foreground: UIColor,
+        background: UIColor,
+        alpha: Double,
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast
+    ) -> UIColor {
+        let resolvedForeground = resolved(foreground, style: style, contrast: contrast)
+        let resolvedBackground = resolved(background, style: style, contrast: contrast)
         var fr: CGFloat = 0
         var fg: CGFloat = 0
         var fb: CGFloat = 0
         var fa: CGFloat = 0
-        foreground.getRed(&fr, green: &fg, blue: &fb, alpha: &fa)
+        resolvedForeground.getRed(&fr, green: &fg, blue: &fb, alpha: &fa)
 
         var br: CGFloat = 0
         var bg: CGFloat = 0
         var bb: CGFloat = 0
         var ba: CGFloat = 0
-        background.getRed(&br, green: &bg, blue: &bb, alpha: &ba)
+        resolvedBackground.getRed(&br, green: &bg, blue: &bb, alpha: &ba)
 
         let a = CGFloat(alpha)
         return UIColor(
@@ -291,7 +456,15 @@ final class DesignContrastTests: XCTestCase {
         )
     }
 
-    private func resolved(_ color: UIColor) -> UIColor {
-        color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
+    private func resolved(
+        _ color: UIColor,
+        style: UIUserInterfaceStyle,
+        contrast: UIAccessibilityContrast
+    ) -> UIColor {
+        let traits = UITraitCollection(traitsFrom: [
+            UITraitCollection(userInterfaceStyle: style),
+            UITraitCollection(accessibilityContrast: contrast)
+        ])
+        return color.resolvedColor(with: traits)
     }
 }

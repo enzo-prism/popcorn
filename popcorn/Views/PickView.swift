@@ -3,6 +3,7 @@ import SwiftData
 
 struct PickView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Query private var movies: [Movie]
     @Query(sort: \ComparisonEvent.createdAt, order: .reverse) private var events: [ComparisonEvent]
     @StateObject private var viewModel = PickViewModel()
@@ -23,7 +24,7 @@ struct PickView: View {
                     DemoModeBanner()
                 }
 
-                Text("Pick the movie you prefer")
+                Label("Pick the movie you prefer", systemImage: "hand.tap")
                     .font(.title2.bold())
 
                 if let left = viewModel.leftMovie, let right = viewModel.rightMovie {
@@ -35,8 +36,10 @@ struct PickView: View {
                                 isDimmed: viewModel.selectedSide == .right,
                                 action: { viewModel.pick(side: .left) }
                             )
-                            Button("Haven't seen") {
+                            Button {
                                 viewModel.markNotSeen(side: .left)
+                            } label: {
+                                Label("Haven't seen", systemImage: "eye.slash")
                             }
                             .buttonStyle(GlassButtonStyle(cornerRadius: 14))
                         }
@@ -48,16 +51,20 @@ struct PickView: View {
                                 isDimmed: viewModel.selectedSide == .left,
                                 action: { viewModel.pick(side: .right) }
                             )
-                            Button("Haven't seen") {
+                            Button {
                                 viewModel.markNotSeen(side: .right)
+                            } label: {
+                                Label("Haven't seen", systemImage: "eye.slash")
                             }
                             .buttonStyle(GlassButtonStyle(cornerRadius: 14))
                         }
                     }
                     .allowsHitTesting(!viewModel.isProcessing)
 
-                    Button("Skip this pair") {
+                    Button {
                         viewModel.skipPair()
+                    } label: {
+                        Label("Skip this pair", systemImage: "forward.end")
                     }
                     .buttonStyle(GlassButtonStyle(cornerRadius: 20, isProminent: true))
                     .allowsHitTesting(!viewModel.isProcessing)
@@ -100,11 +107,11 @@ struct PickView: View {
     }
 
     private var backgroundLayer: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.97, green: 0.95, blue: 0.92),
-                Color(red: 0.90, green: 0.94, blue: 0.98)
-            ],
+        let colors = colorScheme == .dark
+            ? [Color(red: 0.09, green: 0.10, blue: 0.12), Color(red: 0.05, green: 0.08, blue: 0.12)]
+            : [Color(red: 0.97, green: 0.95, blue: 0.92), Color(red: 0.90, green: 0.94, blue: 0.98)]
+        return LinearGradient(
+            colors: colors,
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )

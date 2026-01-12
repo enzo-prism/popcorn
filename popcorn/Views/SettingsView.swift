@@ -8,18 +8,24 @@ struct SettingsView: View {
                     Label("Demo mode (no TMDb key)", systemImage: "sparkles")
                 }
             }
-            Section("About") {
-                NavigationLink("About Popcorn") {
+            Section {
+                NavigationLink {
                     AboutView()
+                } label: {
+                    Label("About Popcorn", systemImage: "info.circle")
                 }
+            } header: {
+                Label("About", systemImage: "film.stack")
             }
-            Section("Credits") {
+            Section {
                 TMDbAttributionView()
+            } header: {
+                Label("Credits", systemImage: "seal")
             }
         }
         .navigationTitle("Settings")
         .scrollContentBackground(.hidden)
-        .background(backgroundLayer)
+        .background(SettingsBackground())
     }
 }
 
@@ -27,7 +33,7 @@ struct AboutView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                Text("Popcorn")
+                Label("Popcorn", systemImage: "film.stack")
                     .font(.title.bold())
 
                 TMDbLogoPlaceholder()
@@ -41,7 +47,7 @@ struct AboutView: View {
             }
             .padding()
         }
-        .background(backgroundLayer)
+        .background(SettingsBackground())
         .navigationTitle("About")
     }
 }
@@ -81,16 +87,21 @@ private struct TMDbLogoPlaceholder: View {
     }
 }
 
-private var backgroundLayer: some View {
-    LinearGradient(
-        colors: [
-            Color(red: 0.95, green: 0.97, blue: 0.98),
-            Color(red: 0.93, green: 0.94, blue: 0.90)
-        ],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    )
-    .ignoresSafeArea()
+private struct SettingsBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        let colors = colorScheme == .dark
+            ? [Color(red: 0.09, green: 0.10, blue: 0.12), Color(red: 0.06, green: 0.08, blue: 0.10)]
+            : [Color(red: 0.95, green: 0.97, blue: 0.98), Color(red: 0.93, green: 0.94, blue: 0.90)]
+
+        LinearGradient(
+            colors: colors,
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
 }
 
 #Preview {
