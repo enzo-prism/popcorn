@@ -66,8 +66,8 @@ private struct TMDbLogoPlaceholder: View {
             .fill(
                 LinearGradient(
                     colors: [
-                        Color(red: 0.01, green: 0.71, blue: 0.74),
-                        Color(red: 0.0, green: 0.39, blue: 0.51)
+                        Color(red: 0.0, green: 0.45, blue: 0.5),
+                        Color(red: 0.0, green: 0.25, blue: 0.35)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing

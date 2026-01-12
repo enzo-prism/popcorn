@@ -6,6 +6,7 @@ struct MovieCardView: View {
     let isDimmed: Bool
     let action: () -> Void
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    private let scrimOpacity = 0.65
 
     var body: some View {
         Button(action: action) {
@@ -19,7 +20,7 @@ struct MovieCardView: View {
                 }
 
                 LinearGradient(
-                    colors: [Color.clear, Color.black.opacity(0.5)],
+                    colors: [Color.clear, Color.black.opacity(scrimOpacity)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
