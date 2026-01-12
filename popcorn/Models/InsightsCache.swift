@@ -10,6 +10,10 @@ final class InsightsCache {
     var favoriteDirectorsData: Data
     var favoriteKeywordsData: Data
     var rubricInsightsData: Data
+    var favoriteGenreEvidenceData: Data?
+    var favoriteActorEvidenceData: Data?
+    var favoriteDirectorEvidenceData: Data?
+    var favoriteKeywordEvidenceData: Data?
 
     var personalityTitle: String
     var personalityTraitsData: Data
@@ -26,6 +30,10 @@ final class InsightsCache {
         favoriteDirectors: [NamedMetric] = [],
         favoriteKeywords: [NamedMetric] = [],
         rubricInsights: [String] = [],
+        favoriteGenreEvidence: [InsightEvidence] = [],
+        favoriteActorEvidence: [InsightEvidence] = [],
+        favoriteDirectorEvidence: [InsightEvidence] = [],
+        favoriteKeywordEvidence: [InsightEvidence] = [],
         personalityTitle: String = "",
         personalityTraits: [String] = [],
         personalitySummary: String = "",
@@ -41,6 +49,10 @@ final class InsightsCache {
         self.favoriteDirectorsData = CodableStore.encode(favoriteDirectors)
         self.favoriteKeywordsData = CodableStore.encode(favoriteKeywords)
         self.rubricInsightsData = CodableStore.encode(rubricInsights)
+        self.favoriteGenreEvidenceData = CodableStore.encode(favoriteGenreEvidence)
+        self.favoriteActorEvidenceData = CodableStore.encode(favoriteActorEvidence)
+        self.favoriteDirectorEvidenceData = CodableStore.encode(favoriteDirectorEvidence)
+        self.favoriteKeywordEvidenceData = CodableStore.encode(favoriteKeywordEvidence)
         self.personalityTitle = personalityTitle
         self.personalityTraitsData = CodableStore.encode(personalityTraits)
         self.personalitySummary = personalitySummary
@@ -75,6 +87,26 @@ final class InsightsCache {
         set { rubricInsightsData = CodableStore.encode(newValue) }
     }
 
+    var favoriteGenreEvidence: [InsightEvidence] {
+        get { CodableStore.decodeOptional([InsightEvidence].self, from: favoriteGenreEvidenceData) ?? [] }
+        set { favoriteGenreEvidenceData = CodableStore.encode(newValue) }
+    }
+
+    var favoriteActorEvidence: [InsightEvidence] {
+        get { CodableStore.decodeOptional([InsightEvidence].self, from: favoriteActorEvidenceData) ?? [] }
+        set { favoriteActorEvidenceData = CodableStore.encode(newValue) }
+    }
+
+    var favoriteDirectorEvidence: [InsightEvidence] {
+        get { CodableStore.decodeOptional([InsightEvidence].self, from: favoriteDirectorEvidenceData) ?? [] }
+        set { favoriteDirectorEvidenceData = CodableStore.encode(newValue) }
+    }
+
+    var favoriteKeywordEvidence: [InsightEvidence] {
+        get { CodableStore.decodeOptional([InsightEvidence].self, from: favoriteKeywordEvidenceData) ?? [] }
+        set { favoriteKeywordEvidenceData = CodableStore.encode(newValue) }
+    }
+
     var personalityTraits: [String] {
         get { CodableStore.decode([String].self, from: personalityTraitsData, default: []) }
         set { personalityTraitsData = CodableStore.encode(newValue) }
@@ -104,4 +136,9 @@ struct NamedMetric: Codable, Hashable {
         score = try container.decode(Double.self, forKey: .score)
         support = try container.decodeIfPresent(Double.self, forKey: .support) ?? 0
     }
+}
+
+struct InsightEvidence: Codable, Hashable {
+    var name: String
+    var movieIDs: [Int]
 }

@@ -12,6 +12,7 @@ final class InsightsEngine {
     private let recentLimit = 40
     private let comparedLimit = 200
     private let detailsFetchLimit = 60
+    private let evidenceMovieLimit = 3
 
     private let minGenreSupport = 0.6
     private let minPeopleSupport = 0.4
@@ -58,6 +59,10 @@ final class InsightsEngine {
         target.favoriteActors = snapshot.favoriteActors
         target.favoriteDirectors = snapshot.favoriteDirectors
         target.favoriteKeywords = snapshot.favoriteKeywords
+        target.favoriteGenreEvidence = snapshot.favoriteGenreEvidence
+        target.favoriteActorEvidence = snapshot.favoriteActorEvidence
+        target.favoriteDirectorEvidence = snapshot.favoriteDirectorEvidence
+        target.favoriteKeywordEvidence = snapshot.favoriteKeywordEvidence
         target.rubricInsights = snapshot.rubricInsights
         target.personalityTitle = snapshot.personality.title
         target.personalityTraits = snapshot.personality.traits
@@ -106,6 +111,10 @@ final class InsightsEngine {
                 favoriteActors: [],
                 favoriteDirectors: [],
                 favoriteKeywords: [],
+                favoriteGenreEvidence: [],
+                favoriteActorEvidence: [],
+                favoriteDirectorEvidence: [],
+                favoriteKeywordEvidence: [],
                 rubricInsights: [],
                 personality: personality,
                 sourceMovieCount: 0,
@@ -156,11 +165,23 @@ final class InsightsEngine {
         var directorNames: [String: String] = [:]
         var keywordNames: [String: String] = [:]
 
+        var genreEvidence: [String: [Int: Double]] = [:]
+        var actorEvidence: [String: [Int: Double]] = [:]
+        var directorEvidence: [String: [Int: Double]] = [:]
+        var keywordEvidence: [String: [Int: Double]] = [:]
+
         for movie in candidateMovies {
             guard let signal = signalsById[movie.tmdbID] else { continue }
             let genres = movie.genreNames
             let genreWeight = 1.0 / Double(max(1, genres.count))
             for genre in genres {
+                let contribution = signal.score * signal.weight * genreWeight
+                Self.recordEvidence(
+                    &genreEvidence,
+                    name: genre,
+                    movieID: movie.tmdbID,
+                    contribution: contribution
+                )
                 InsightsScorer.addTag(
                     key: genre,
                     displayName: genre,
@@ -174,6 +195,13 @@ final class InsightsEngine {
             if let details = movie.details {
                 for castMember in details.cast.sorted(by: { $0.order < $1.order }).prefix(5) {
                     let weight = 1.0 / Double(max(1, castMember.order + 1))
+                    let contribution = signal.score * signal.weight * weight
+                    Self.recordEvidence(
+                        &actorEvidence,
+                        name: castMember.name,
+                        movieID: movie.tmdbID,
+                        contribution: contribution
+                    )
                     InsightsScorer.addTag(
                         key: castMember.name,
                         displayName: castMember.name,
@@ -184,6 +212,13 @@ final class InsightsEngine {
                     )
                 }
                 for crewMember in details.crew where crewMember.job == "Director" {
+                    let contribution = signal.score * signal.weight
+                    Self.recordEvidence(
+                        &directorEvidence,
+                        name: crewMember.name,
+                        movieID: movie.tmdbID,
+                        contribution: contribution
+                    )
                     InsightsScorer.addTag(
                         key: crewMember.name,
                         displayName: crewMember.name,
@@ -195,9 +230,17 @@ final class InsightsEngine {
                 }
                 for keyword in details.keywords {
                     guard let normalized = normalizedKeyword(keyword) else { continue }
+                    let displayName = displayKeyword(normalized)
+                    let contribution = signal.score * signal.weight * keywordWeight
+                    Self.recordEvidence(
+                        &keywordEvidence,
+                        name: displayName,
+                        movieID: movie.tmdbID,
+                        contribution: contribution
+                    )
                     InsightsScorer.addTag(
                         key: normalized,
-                        displayName: displayKeyword(normalized),
+                        displayName: displayName,
                         weight: keywordWeight,
                         signal: signal,
                         stats: &keywordStats,
@@ -289,6 +332,27 @@ final class InsightsEngine {
             minScore: minTagScore
         )
 
+        let favoriteGenreEvidence = Self.buildEvidence(
+            favorites: favoriteGenres,
+            contributions: genreEvidence,
+            movieLimit: evidenceMovieLimit
+        )
+        let favoriteActorEvidence = Self.buildEvidence(
+            favorites: favoriteActors,
+            contributions: actorEvidence,
+            movieLimit: evidenceMovieLimit
+        )
+        let favoriteDirectorEvidence = Self.buildEvidence(
+            favorites: favoriteDirectors,
+            contributions: directorEvidence,
+            movieLimit: evidenceMovieLimit
+        )
+        let favoriteKeywordEvidence = Self.buildEvidence(
+            favorites: favoriteKeywords,
+            contributions: keywordEvidence,
+            movieLimit: evidenceMovieLimit
+        )
+
         let rubricInsights = computeRubricInsights(from: candidateMovies, signalsById: signalsById)
         let personality = personalityPresenter.present(
             profile: profile,
@@ -303,6 +367,10 @@ final class InsightsEngine {
             favoriteActors: favoriteActors,
             favoriteDirectors: favoriteDirectors,
             favoriteKeywords: favoriteKeywords,
+            favoriteGenreEvidence: favoriteGenreEvidence,
+            favoriteActorEvidence: favoriteActorEvidence,
+            favoriteDirectorEvidence: favoriteDirectorEvidence,
+            favoriteKeywordEvidence: favoriteKeywordEvidence,
             rubricInsights: rubricInsights,
             personality: personality,
             sourceMovieCount: candidateMovies.count,
@@ -468,6 +536,34 @@ final class InsightsEngine {
         return nil
     }
 
+    nonisolated static func buildEvidence(
+        favorites: [NamedMetric],
+        contributions: [String: [Int: Double]],
+        movieLimit: Int
+    ) -> [InsightEvidence] {
+        favorites.compactMap { favorite in
+            guard let movieScores = contributions[favorite.name] else { return nil }
+            let movieIDs = movieScores
+                .sorted { $0.value > $1.value }
+                .prefix(movieLimit)
+                .map(\.key)
+            guard !movieIDs.isEmpty else { return nil }
+            return InsightEvidence(name: favorite.name, movieIDs: movieIDs)
+        }
+    }
+
+    private static func recordEvidence(
+        _ evidence: inout [String: [Int: Double]],
+        name: String,
+        movieID: Int,
+        contribution: Double
+    ) {
+        guard contribution > 0 else { return }
+        var entry = evidence[name] ?? [:]
+        entry[movieID, default: 0] += contribution
+        evidence[name] = entry
+    }
+
     private func fetchCache() -> InsightsCache? {
         var descriptor = FetchDescriptor<InsightsCache>()
         descriptor.fetchLimit = 1
@@ -483,6 +579,10 @@ final class InsightsEngine {
         let favoriteActors: [NamedMetric]
         let favoriteDirectors: [NamedMetric]
         let favoriteKeywords: [NamedMetric]
+        let favoriteGenreEvidence: [InsightEvidence]
+        let favoriteActorEvidence: [InsightEvidence]
+        let favoriteDirectorEvidence: [InsightEvidence]
+        let favoriteKeywordEvidence: [InsightEvidence]
         let rubricInsights: [String]
         let personality: TastePersonalitySnapshot
         let sourceMovieCount: Int

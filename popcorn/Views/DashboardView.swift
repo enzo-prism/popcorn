@@ -63,10 +63,34 @@ struct DashboardView: View {
                         }
                         .padding(.vertical, 4)
                     }
-                    insightBlock(title: "Favorite genres", systemImage: "theatermasks", items: insightsCache.favoriteGenres)
-                    insightBlock(title: "Favorite actors", systemImage: "person.2.fill", items: insightsCache.favoriteActors)
-                    insightBlock(title: "Favorite directors", systemImage: "video.fill", items: insightsCache.favoriteDirectors)
-                    insightBlock(title: "Favorite themes", systemImage: "tag.fill", items: insightsCache.favoriteKeywords)
+                    insightBlock(
+                        title: "Favorite genres",
+                        systemImage: "theatermasks",
+                        items: insightsCache.favoriteGenres,
+                        evidence: insightsCache.favoriteGenreEvidence,
+                        moviesByID: movieIndex
+                    )
+                    insightBlock(
+                        title: "Favorite actors",
+                        systemImage: "person.2.fill",
+                        items: insightsCache.favoriteActors,
+                        evidence: insightsCache.favoriteActorEvidence,
+                        moviesByID: movieIndex
+                    )
+                    insightBlock(
+                        title: "Favorite directors",
+                        systemImage: "video.fill",
+                        items: insightsCache.favoriteDirectors,
+                        evidence: insightsCache.favoriteDirectorEvidence,
+                        moviesByID: movieIndex
+                    )
+                    insightBlock(
+                        title: "Favorite themes",
+                        systemImage: "tag.fill",
+                        items: insightsCache.favoriteKeywords,
+                        evidence: insightsCache.favoriteKeywordEvidence,
+                        moviesByID: movieIndex
+                    )
 
                     if !insightsCache.rubricInsights.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
@@ -169,21 +193,49 @@ struct DashboardView: View {
         return Array(movies.prefix(limit))
     }
 
+    private var movieIndex: [Int: Movie] {
+        Dictionary(uniqueKeysWithValues: movies.map { ($0.tmdbID, $0) })
+    }
+
     @ViewBuilder
-    private func insightBlock(title: String, systemImage: String, items: [NamedMetric]) -> some View {
+    private func insightBlock(
+        title: String,
+        systemImage: String,
+        items: [NamedMetric],
+        evidence: [InsightEvidence],
+        moviesByID: [Int: Movie]
+    ) -> some View {
         if !items.isEmpty {
-            VStack(alignment: .leading, spacing: 6) {
+            let evidenceMap = Dictionary(uniqueKeysWithValues: evidence.map { ($0.name, $0.movieIDs) })
+            VStack(alignment: .leading, spacing: 10) {
                 Label(title, systemImage: systemImage)
                     .font(.subheadline.weight(.semibold))
                 ForEach(items, id: \.name) { item in
-                    Text("• \(item.name)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    let evidenceMovies = (evidenceMap[item.name] ?? [])
+                        .compactMap { moviesByID[$0] }
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(item.name)
+                            .font(.subheadline.weight(.semibold))
+                        if !evidenceMovies.isEmpty {
+                            insightEvidenceRow(movies: Array(evidenceMovies.prefix(3)))
+                        }
+                    }
                 }
             }
             .padding(.vertical, 4)
             .glassSurface(cornerRadius: 16, padding: EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12))
             .listRowBackground(Color.clear)
+        }
+    }
+
+    private func insightEvidenceRow(movies: [Movie]) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(movies) { movie in
+                    InsightEvidenceCard(movie: movie)
+                }
+            }
+            .padding(.vertical, 2)
         }
     }
 
@@ -216,6 +268,44 @@ struct DashboardView: View {
             endPoint: .bottomTrailing
         )
         .ignoresSafeArea()
+    }
+}
+
+private struct InsightEvidenceCard: View {
+    let movie: Movie
+    private let cardWidth: CGFloat = 96
+    private let scrimOpacity = 0.7
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            if let posterURL {
+                RemoteImageView(url: posterURL)
+                    .clipped()
+            } else {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.black.opacity(0.12))
+            }
+
+            LinearGradient(
+                colors: [Color.clear, Color.black.opacity(scrimOpacity)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+            Text(movie.title)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.white)
+                .lineLimit(2)
+                .padding(6)
+        }
+        .frame(width: cardWidth, height: cardWidth / 0.7)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private var posterURL: URL? {
+        guard let path = movie.posterPath else { return nil }
+        return TMDbImageURL.posterURL(path: path, size: "w342")
     }
 }
 
