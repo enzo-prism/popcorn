@@ -45,7 +45,8 @@ final class InsightsEngine {
             let age = Date().timeIntervalSince(cache.updatedAt)
             if age < refreshInterval {
                 let currentPickCount = fetchComparisonEvents().count
-                if currentPickCount - cache.sourcePickCount < refreshPickDelta {
+                let cachedPickCount = cache.sourcePickCount ?? 0
+                if currentPickCount - cachedPickCount < refreshPickDelta {
                     return cache
                 }
             }

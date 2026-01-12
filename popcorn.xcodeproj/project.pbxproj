@@ -26,12 +26,14 @@
 		546DA4C505D8684E8B43A8DC /* TasteAxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C60085A64B8315C09BE0381 /* TasteAxes.swift */; };
 		54D81E1A28EAF678F7A04C71 /* EloRanker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAD7D7E8C20F0DFDF132AEB /* EloRanker.swift */; };
 		5505BCE74B11B9750BF589D0 /* TasteAxesConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F637E02A558D433A3A6EE48 /* TasteAxesConfig.json */; };
+		634785E2B4E1BB5CC3A4AA01 /* PopcornSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DDD92A9297E0EB9E439845 /* PopcornSchema.swift */; };
 		697D3FA45856A6B9D28041CF /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA72DD035BBFE7F0F1FC5BC /* RemoteImageView.swift */; };
 		704D607B30EA8C8208D04581 /* EloRankerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5AB1A1F817A402084FF96A /* EloRankerTests.swift */; };
 		704FC93995D6D0CA99D85DA0 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368305BD7F5EE847B5AA78EC /* AppConfig.swift */; };
 		721B6D21213E52B4E01868B0 /* TasteVectorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9075F040FFC5403B2D80730F /* TasteVectorStore.swift */; };
 		725105732D65EA2828B0B786 /* TMDbClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54215DB65C06A851FD413F1 /* TMDbClientTests.swift */; };
 		75BEE87062E5E93B871A9D17 /* GlassStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761F6B53A0FC725244D6248E /* GlassStyle.swift */; };
+		79C719AC26007CA08692240B /* SwiftDataMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3838D27EA3BB54B02E330 /* SwiftDataMigrationTests.swift */; };
 		7A41A60C6C84B4CB950CA9C4 /* ForcedChoiceTasteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68FFDC3BB60372101C227E7 /* ForcedChoiceTasteModel.swift */; };
 		7C2BAE7A2B50004175F50908 /* PickViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B550F7F01C891755B72DBF /* PickViewModel.swift */; };
 		7CE4934BC52A0FD8769C1CEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975DDE35C35D3DC82FB33A4C /* ContentView.swift */; };
@@ -115,6 +117,7 @@
 		A90F1CFCF1D77669C17F4457 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		B085D990C076BBFEE770C535 /* TasteCATSelectorDeterminismTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteCATSelectorDeterminismTests.swift; sourceTree = "<group>"; };
 		B2C24091E096CE57AC751692 /* TastePersonalityInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TastePersonalityInfoSheet.swift; sourceTree = "<group>"; };
+		B4DDD92A9297E0EB9E439845 /* PopcornSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopcornSchema.swift; sourceTree = "<group>"; };
 		BA5D62E4ADB0FE347E3D94FB /* InsightsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsEngine.swift; sourceTree = "<group>"; };
 		BFA72DD035BBFE7F0F1FC5BC /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
 		C02A813A984D46B12805DA67 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
@@ -133,6 +136,7 @@
 		E50C4A5340972CFAA8C02216 /* SampleMoviesLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleMoviesLoader.swift; sourceTree = "<group>"; };
 		E95D69422F93AE0808188A4A /* ComparisonEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComparisonEvent.swift; sourceTree = "<group>"; };
 		EC5AB1A1F817A402084FF96A /* EloRankerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EloRankerTests.swift; sourceTree = "<group>"; };
+		EFF3838D27EA3BB54B02E330 /* SwiftDataMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataMigrationTests.swift; sourceTree = "<group>"; };
 		F0A7503AF548C515995DD902 /* PersonalityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalityEngine.swift; sourceTree = "<group>"; };
 		F4A9E269E2804808BFA6020F /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		F68FFDC3BB60372101C227E7 /* ForcedChoiceTasteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForcedChoiceTasteModel.swift; sourceTree = "<group>"; };
@@ -215,6 +219,7 @@
 				2E34A6787F006B516208B19C /* MovieCardViewTests.swift */,
 				3DE03B76DAAF8D8C91B477FC /* PairSelectorTests.swift */,
 				1CB294353BE57DB6DA088A2D /* SimulationConvergenceTests.swift */,
+				EFF3838D27EA3BB54B02E330 /* SwiftDataMigrationTests.swift */,
 				B085D990C076BBFEE770C535 /* TasteCATSelectorDeterminismTests.swift */,
 				D54215DB65C06A851FD413F1 /* TMDbClientTests.swift */,
 			);
@@ -279,6 +284,7 @@
 				0FF14BF216A2C741B1881B61 /* InsightsCache.swift */,
 				16DBC5F7300A7DBF49CD8B17 /* Movie.swift */,
 				6DEF12EFB94AFCB7107FC02B /* MovieTasteVector.swift */,
+				B4DDD92A9297E0EB9E439845 /* PopcornSchema.swift */,
 				3EBE7E942007730E190BF35F /* PreviewStore.swift */,
 				E4657420E626513183CF8EA0 /* TasteAxesConfigState.swift */,
 				9E18FB52A81D2B7A0601E6AD /* UserTasteProfile.swift */,
@@ -398,6 +404,7 @@
 				9B2B6DD1FE16E3B7DE4688D9 /* PersonalityPresenter.swift in Sources */,
 				9F8A7A3EADB9A5CB50E87118 /* PickView.swift in Sources */,
 				7C2BAE7A2B50004175F50908 /* PickViewModel.swift in Sources */,
+				634785E2B4E1BB5CC3A4AA01 /* PopcornSchema.swift in Sources */,
 				D7D9B8FB736C4091848B0CFE /* PreviewStore.swift in Sources */,
 				4285C85C2F6023965832ED57 /* RefreshMomentSheet.swift in Sources */,
 				697D3FA45856A6B9D28041CF /* RemoteImageView.swift in Sources */,
@@ -429,6 +436,7 @@
 				3BB9029C47EEA5C6B95A6774 /* MovieCardViewTests.swift in Sources */,
 				305DE015C8AD04E239F7B057 /* PairSelectorTests.swift in Sources */,
 				BBB5A25EFF381E77B54965AE /* SimulationConvergenceTests.swift in Sources */,
+				79C719AC26007CA08692240B /* SwiftDataMigrationTests.swift in Sources */,
 				725105732D65EA2828B0B786 /* TMDbClientTests.swift in Sources */,
 				E43EAA57E4C9D35E1153AFA3 /* TasteCATSelectorDeterminismTests.swift in Sources */,
 			);

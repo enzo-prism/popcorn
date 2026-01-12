@@ -47,13 +47,16 @@ struct DashboardView: View {
                 }
 
                 if let insightsCache {
-                    if insightsCache.sourceMovieCount > 0 {
+                    let sourceMovieCount = insightsCache.sourceMovieCount ?? 0
+                    let sourcePickCount = insightsCache.sourcePickCount ?? 0
+                    let detailsCoverage = insightsCache.detailsCoverage ?? 0
+                    if sourceMovieCount > 0 {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Based on \(insightsCache.sourcePickCount) picks across \(insightsCache.sourceMovieCount) movies")
+                            Text("Based on \(sourcePickCount) picks across \(sourceMovieCount) movies")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                            if insightsCache.detailsCoverage > 0 {
-                                Text("Details coverage \(Int(insightsCache.detailsCoverage * 100))%")
+                            if detailsCoverage > 0 {
+                                Text("Details coverage \(Int(detailsCoverage * 100))%")
                                     .font(.caption2)
                                     .foregroundStyle(.secondary)
                             }

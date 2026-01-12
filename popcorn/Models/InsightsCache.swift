@@ -15,9 +15,9 @@ final class InsightsCache {
     var personalityTraitsData: Data
     var personalitySummary: String
     var personalityConfidence: Double
-    var sourceMovieCount: Int
-    var sourcePickCount: Int
-    var detailsCoverage: Double
+    var sourceMovieCount: Int?
+    var sourcePickCount: Int?
+    var detailsCoverage: Double?
 
     init(
         updatedAt: Date = Date(),
