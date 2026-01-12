@@ -26,9 +26,8 @@ struct SampleMovieDTO: Decodable {
 
 enum SampleMoviesLoader {
     static func loadMovies() -> [Movie] {
-        guard let url = Bundle.main.url(forResource: "SampleMovies", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let dtos = try? JSONDecoder().decode([SampleMovieDTO].self, from: data) else {
+        let dtos = loadDTOs()
+        guard !dtos.isEmpty else {
             return []
         }
 
@@ -48,6 +47,15 @@ enum SampleMoviesLoader {
                 genreNames: dto.genres
             )
         }
+    }
+
+    static func loadDTOs() -> [SampleMovieDTO] {
+        guard let url = Bundle.main.url(forResource: "SampleMovies", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let dtos = try? JSONDecoder().decode([SampleMovieDTO].self, from: data) else {
+            return []
+        }
+        return dtos
     }
 
     private static let dateFormatter: DateFormatter = {

@@ -13,6 +13,7 @@ final class MovieRepository {
         let descriptor = FetchDescriptor<Movie>()
         let existingMovies = (try? context.fetch(descriptor)) ?? []
         if !existingMovies.isEmpty {
+            backfillPosterPathsIfNeeded(in: existingMovies)
             TasteVectorStore(context: context).ensureVectors(for: existingMovies)
             return
         }
@@ -61,6 +62,39 @@ final class MovieRepository {
             assertionFailure("Failed to save movies: \(error)")
         }
         TasteVectorStore(context: context).ensureVectors(for: movies)
+    }
+
+    private func backfillPosterPathsIfNeeded(in movies: [Movie]) {
+        guard movies.contains(where: { ($0.posterPath ?? "").isEmpty }) else { return }
+        let dtos = SampleMoviesLoader.loadDTOs()
+        guard !dtos.isEmpty else { return }
+        let sampleByID = Dictionary(uniqueKeysWithValues: dtos.map { ($0.id, $0) })
+        var didUpdate = false
+
+        for movie in movies {
+            guard (movie.posterPath ?? "").isEmpty else { continue }
+            guard let sample = sampleByID[movie.tmdbID],
+                  let posterPath = sample.posterPath,
+                  !posterPath.isEmpty else {
+                continue
+            }
+            movie.posterPath = posterPath
+            if (movie.backdropPath ?? "").isEmpty {
+                movie.backdropPath = sample.backdropPath
+            }
+            movie.updatedAt = Date()
+            didUpdate = true
+        }
+
+        guard didUpdate else { return }
+        do {
+            try context.save()
+#if DEBUG
+            print("Backfilled poster paths for demo movies.")
+#endif
+        } catch {
+            assertionFailure("Failed to backfill posters: \(error)")
+        }
     }
 
     private func mapTMDbMovie(_ dto: TMDbMovieDTO) -> Movie? {

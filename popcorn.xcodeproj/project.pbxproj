@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -114,7 +114,7 @@
 		4FAD7D7E8C20F0DFDF132AEB /* EloRanker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EloRanker.swift; sourceTree = "<group>"; };
 		513A5AC93652B94C5558A616 /* TasteVectorBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteVectorBuilder.swift; sourceTree = "<group>"; };
 		58AFC1D4190E8CA4444F03F4 /* ImageCacheKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheKeyTests.swift; sourceTree = "<group>"; };
-		5EABD0AC987248FCAFFFBA3B /* Popcorn.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Popcorn.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EABD0AC987248FCAFFFBA3B /* Popcorn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Popcorn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F920D19D6C5654F1C547178 /* ImagePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePipeline.swift; sourceTree = "<group>"; };
 		5FFD1D68117BD29FC8FB1539 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6599C9BD354AC77313D18653 /* TMDbImageURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDbImageURL.swift; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 		756E4C63177A83A8456BDE8E /* TasteCATSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteCATSelector.swift; sourceTree = "<group>"; };
 		75B748D7A135FC139F80DA46 /* PickMovieCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickMovieCardView.swift; sourceTree = "<group>"; };
 		761F6B53A0FC725244D6248E /* GlassStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassStyle.swift; sourceTree = "<group>"; };
-		769926F726C063416530CB7E /* PopcornTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PopcornTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		769926F726C063416530CB7E /* PopcornTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PopcornTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F44AF165B5D4A24F12005C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		80FF50F44B630F5F4880FCE6 /* MovieCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardView.swift; sourceTree = "<group>"; };
 		836A940B06AB03DF4E1DDF9F /* TMDbImageURLBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMDbImageURLBuilderTests.swift; sourceTree = "<group>"; };
@@ -392,7 +392,6 @@
 			);
 			mainGroup = 2B41456DED16CAAAEB9C7FA2;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -516,6 +515,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L49MKXGVM4;
 				INFOPLIST_FILE = Popcorn/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -536,6 +536,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L49MKXGVM4;
 				INFOPLIST_FILE = Popcorn/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
