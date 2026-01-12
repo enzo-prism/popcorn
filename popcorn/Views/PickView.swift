@@ -28,38 +28,16 @@ struct PickView: View {
                     .font(.title2.bold())
 
                 if let left = viewModel.leftMovie, let right = viewModel.rightMovie {
-                    HStack(alignment: .top, spacing: 12) {
-                        VStack(spacing: 8) {
-                            MovieCardView(
-                                movie: left,
-                                isSelected: viewModel.selectedSide == .left,
-                                isDimmed: viewModel.selectedSide == .right,
-                                action: { viewModel.pick(side: .left) }
-                            )
-                            Button {
-                                viewModel.markNotSeen(side: .left)
-                            } label: {
-                                Label("Haven't seen", systemImage: "eye.slash")
-                            }
-                            .buttonStyle(GlassButtonStyle(cornerRadius: 14))
-                        }
-
-                        VStack(spacing: 8) {
-                            MovieCardView(
-                                movie: right,
-                                isSelected: viewModel.selectedSide == .right,
-                                isDimmed: viewModel.selectedSide == .left,
-                                action: { viewModel.pick(side: .right) }
-                            )
-                            Button {
-                                viewModel.markNotSeen(side: .right)
-                            } label: {
-                                Label("Haven't seen", systemImage: "eye.slash")
-                            }
-                            .buttonStyle(GlassButtonStyle(cornerRadius: 14))
-                        }
-                    }
-                    .allowsHitTesting(!viewModel.isProcessing)
+                    PickCardRow(
+                        left: left,
+                        right: right,
+                        selectedSide: viewModel.selectedSide,
+                        isProcessing: viewModel.isProcessing,
+                        onPickLeft: { viewModel.pick(side: .left) },
+                        onPickRight: { viewModel.pick(side: .right) },
+                        onNotSeenLeft: { viewModel.markNotSeen(side: .left) },
+                        onNotSeenRight: { viewModel.markNotSeen(side: .right) }
+                    )
 
                     Button {
                         viewModel.skipPair()

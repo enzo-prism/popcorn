@@ -26,6 +26,7 @@
 		546DA4C505D8684E8B43A8DC /* TasteAxes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C60085A64B8315C09BE0381 /* TasteAxes.swift */; };
 		54D81E1A28EAF678F7A04C71 /* EloRanker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAD7D7E8C20F0DFDF132AEB /* EloRanker.swift */; };
 		5505BCE74B11B9750BF589D0 /* TasteAxesConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F637E02A558D433A3A6EE48 /* TasteAxesConfig.json */; };
+		57D20FB2A2EDA4FE1FE105BD /* PickCardRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F20D32A36396AB391102A3D /* PickCardRow.swift */; };
 		634785E2B4E1BB5CC3A4AA01 /* PopcornSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DDD92A9297E0EB9E439845 /* PopcornSchema.swift */; };
 		697D3FA45856A6B9D28041CF /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA72DD035BBFE7F0F1FC5BC /* RemoteImageView.swift */; };
 		704D607B30EA8C8208D04581 /* EloRankerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5AB1A1F817A402084FF96A /* EloRankerTests.swift */; };
@@ -61,6 +62,7 @@
 		E352B8C73915BFDD6ECC6871 /* InsightsScorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2312F480FF18E51AEE501F2 /* InsightsScorer.swift */; };
 		E43EAA57E4C9D35E1153AFA3 /* TasteCATSelectorDeterminismTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B085D990C076BBFEE770C535 /* TasteCATSelectorDeterminismTests.swift */; };
 		EE5FBBE6642A22B83CFA2133 /* TasteCATSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 756E4C63177A83A8456BDE8E /* TasteCATSelector.swift */; };
+		F0A777D7BC43D4784B9572FF /* PickCardRowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E061A5160B729FB88BB1EA /* PickCardRowTests.swift */; };
 		F1697166F91D8F508E47BFA3 /* popcornApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843BD24BC18171B6949214D /* popcornApp.swift */; };
 		F57967E527095C1091DE0A7F /* SeededRandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04031C0AC6A8B670C37BBFEE /* SeededRandomNumberGenerator.swift */; };
 		FB80203F010E1F6535E241BE /* TMDbClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97ADBB5F5A44FE6C80DD053 /* TMDbClient.swift */; };
@@ -87,7 +89,9 @@
 		213900756345FCEE968F060E /* RefreshMomentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMomentSheet.swift; sourceTree = "<group>"; };
 		2AB51277F4FEA30F06063178 /* PersonalityPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalityPresenter.swift; sourceTree = "<group>"; };
 		2E34A6787F006B516208B19C /* MovieCardViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardViewTests.swift; sourceTree = "<group>"; };
+		2F20D32A36396AB391102A3D /* PickCardRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickCardRow.swift; sourceTree = "<group>"; };
 		368305BD7F5EE847B5AA78EC /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		36E061A5160B729FB88BB1EA /* PickCardRowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickCardRowTests.swift; sourceTree = "<group>"; };
 		3DE03B76DAAF8D8C91B477FC /* PairSelectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairSelectorTests.swift; sourceTree = "<group>"; };
 		3EBE7E942007730E190BF35F /* PreviewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStore.swift; sourceTree = "<group>"; };
 		49B550F7F01C891755B72DBF /* PickViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickViewModel.swift; sourceTree = "<group>"; };
@@ -218,6 +222,7 @@
 				D17E2514DC5057DA119F7614 /* InsightsScorerTests.swift */,
 				2E34A6787F006B516208B19C /* MovieCardViewTests.swift */,
 				3DE03B76DAAF8D8C91B477FC /* PairSelectorTests.swift */,
+				36E061A5160B729FB88BB1EA /* PickCardRowTests.swift */,
 				1CB294353BE57DB6DA088A2D /* SimulationConvergenceTests.swift */,
 				EFF3838D27EA3BB54B02E330 /* SwiftDataMigrationTests.swift */,
 				B085D990C076BBFEE770C535 /* TasteCATSelectorDeterminismTests.swift */,
@@ -266,6 +271,7 @@
 				80FF50F44B630F5F4880FCE6 /* MovieCardView.swift */,
 				002305AB10CA204B9C4CF442 /* MovieDetailView.swift */,
 				6BA38E3C000AE3582AA59329 /* MovieRowView.swift */,
+				2F20D32A36396AB391102A3D /* PickCardRow.swift */,
 				A1A41658CD182A5675E0874F /* PickView.swift */,
 				213900756345FCEE968F060E /* RefreshMomentSheet.swift */,
 				BFA72DD035BBFE7F0F1FC5BC /* RemoteImageView.swift */,
@@ -402,6 +408,7 @@
 				A2C1B2B9604FCCF80D77C5CA /* PairSelector.swift in Sources */,
 				0B987B36D5F9A1CE5440A29F /* PersonalityEngine.swift in Sources */,
 				9B2B6DD1FE16E3B7DE4688D9 /* PersonalityPresenter.swift in Sources */,
+				57D20FB2A2EDA4FE1FE105BD /* PickCardRow.swift in Sources */,
 				9F8A7A3EADB9A5CB50E87118 /* PickView.swift in Sources */,
 				7C2BAE7A2B50004175F50908 /* PickViewModel.swift in Sources */,
 				634785E2B4E1BB5CC3A4AA01 /* PopcornSchema.swift in Sources */,
@@ -435,6 +442,7 @@
 				96C3A07667F162DCED2AF925 /* InsightsScorerTests.swift in Sources */,
 				3BB9029C47EEA5C6B95A6774 /* MovieCardViewTests.swift in Sources */,
 				305DE015C8AD04E239F7B057 /* PairSelectorTests.swift in Sources */,
+				F0A777D7BC43D4784B9572FF /* PickCardRowTests.swift in Sources */,
 				BBB5A25EFF381E77B54965AE /* SimulationConvergenceTests.swift in Sources */,
 				79C719AC26007CA08692240B /* SwiftDataMigrationTests.swift in Sources */,
 				725105732D65EA2828B0B786 /* TMDbClientTests.swift in Sources */,

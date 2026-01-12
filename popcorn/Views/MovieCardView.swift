@@ -135,6 +135,8 @@ private struct MovieTitleLabel: UIViewRepresentable {
         label.textColor = .white
         label.lineBreakMode = .byWordWrapping
         label.adjustsFontForContentSizeCategory = true
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         label.accessibilityIdentifier = "movie-card-title"
         return label
     }
@@ -142,5 +144,12 @@ private struct MovieTitleLabel: UIViewRepresentable {
     func updateUIView(_ uiView: UILabel, context: Context) {
         uiView.text = text
         uiView.font = font
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize {
+        let targetWidth = proposal.width ?? uiView.bounds.width
+        let width = targetWidth > 0 ? targetWidth : 0
+        let size = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
+        return CGSize(width: width == 0 ? size.width : width, height: size.height)
     }
 }
