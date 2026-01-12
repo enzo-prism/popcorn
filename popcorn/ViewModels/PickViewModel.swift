@@ -24,6 +24,9 @@ final class PickViewModel: ObservableObject {
         if !movies.isEmpty {
             tasteVectorMap = TasteVectorStore(context: context).vectorMap(for: movies)
         }
+        Task {
+            await TMDbImageConfigurationStore.shared.refreshIfNeeded(apiKey: AppConfig.tmdbApiKey)
+        }
     }
 
     func updateMovies(_ movies: [Movie]) {
@@ -134,6 +137,23 @@ final class PickViewModel: ObservableObject {
         }
         leftMovie = pair.left
         rightMovie = pair.right
+        prefetchPosters(left: pair.left, right: pair.right)
+    }
+
+    private func prefetchPosters(left: Movie, right: Movie) {
+        let screenWidth = UIScreen.main.bounds.width
+        let horizontalPadding: CGFloat = 32
+        let spacing: CGFloat = 12
+        let cardWidth = max((screenWidth - horizontalPadding - spacing) / 2, 120)
+        let scale = UIScreen.main.scale
+
+        let urls = [left.posterPath, right.posterPath]
+            .compactMap { TMDbImageURLBuilder.posterURL(posterPath: $0, targetPointWidth: cardWidth, screenScale: scale) }
+
+        guard !urls.isEmpty else { return }
+        Task {
+            await ImagePipeline.shared.prefetch(urls)
+        }
     }
 
     private func applyElo(winner: Movie, loser: Movie, at date: Date) {

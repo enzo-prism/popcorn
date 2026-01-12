@@ -45,11 +45,14 @@ struct PickMovieCardView: View {
     }
 
     private var posterView: some View {
-        ZStack {
-            if let posterURL {
-                RemoteImageView(url: posterURL)
-                    .clipped()
-            } else {
+        GeometryReader { proxy in
+            let targetWidth = max(proxy.size.width, 1)
+            let url = TMDbImageURLBuilder.posterURL(
+                posterPath: movie.posterPath,
+                targetPointWidth: targetWidth,
+                screenScale: UIScreen.main.scale
+            )
+            RemoteImageView(url: url) {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(Color.black.opacity(0.08))
                     .overlay(
@@ -128,10 +131,6 @@ struct PickMovieCardView: View {
         return UIFont(descriptor: descriptor, size: 0)
     }
 
-    private var posterURL: URL? {
-        guard let path = movie.posterPath else { return nil }
-        return TMDbImageURL.posterURL(path: path)
-    }
 }
 
 #Preview {

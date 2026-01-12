@@ -46,6 +46,12 @@ TMDB_API_KEY = YOUR_TMDB_KEY_HERE
 
 If no key is present, the app runs in demo mode using the bundled `Popcorn/Resources/SampleMovies.json` (~100 movies).
 
+## Posters
+
+- Poster URLs are built from the TMDb `/configuration` response (cached for 7 days) using `secure_base_url` and the closest `poster_sizes` match for the on-screen width.
+- If configuration is unavailable, the app falls back to `https://image.tmdb.org/t/p/` with `w500` to keep posters working.
+- Images are cached in memory and on disk under the app’s Caches directory (`PopcornImageCache`).
+
 ## How the Top 1000 fetch works
 
 - Uses TMDb `/discover/movie`.

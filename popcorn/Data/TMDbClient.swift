@@ -65,6 +65,22 @@ struct TMDbKeyword: Decodable {
     let name: String
 }
 
+struct TMDbConfigurationResponse: Decodable {
+    let images: TMDbImageConfigurationPayload
+}
+
+struct TMDbImageConfigurationPayload: Decodable {
+    let secureBaseURL: String?
+    let baseURL: String?
+    let posterSizes: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case secureBaseURL = "secure_base_url"
+        case baseURL = "base_url"
+        case posterSizes = "poster_sizes"
+    }
+}
+
 enum TMDbGenres {
     static let namesByID: [Int: String] = [
         28: "Action",
@@ -154,6 +170,23 @@ struct TMDbClient {
         let keywords = keywordsResponse.keywords.map { $0.name }
 
         return MovieDetails(cast: cast, crew: crew, keywords: keywords, lastUpdatedAt: Date())
+    }
+
+    func fetchImageConfiguration() async throws -> TMDbImageConfigurationPayload {
+        let url = makeURL(
+            path: "/configuration",
+            queryItems: [
+                URLQueryItem(name: "api_key", value: apiKey)
+            ]
+        )
+
+        let (data, response) = try await session.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200..<300).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        let decoded = try JSONDecoder().decode(TMDbConfigurationResponse.self, from: data)
+        return decoded.images
     }
 
     private func discoverMovies(page: Int, minVoteCount: Int, from startDate: Date, to endDate: Date) async throws -> TMDbDiscoverResponse {
