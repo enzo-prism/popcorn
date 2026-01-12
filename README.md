@@ -17,6 +17,20 @@ xcodegen
 open Popcorn.xcodeproj
 ```
 
+If you add or rename files, re-run `xcodegen` to regenerate the project.
+
+## Project layout
+
+- `popcorn/`: App target source code
+- `popcorn/Data`: TMDb client, repository, caches, demo data loader
+- `popcorn/Domain`: Elo + pairing + taste model + insights logic
+- `popcorn/Models`: SwiftData models
+- `popcorn/ViewModels`: SwiftUI view models
+- `popcorn/Views`: SwiftUI views and styling
+- `popcorn/Resources`: Assets, bundled JSON, config files
+- `PopcornTests/`: Unit tests
+- `project.yml`: XcodeGen project definition
+
 ## TMDb API key
 
 The app reads your TMDb API key from either:
@@ -42,6 +56,17 @@ If no key is present, the app runs in demo mode using the bundled `Popcorn/Resou
 - Credits and keywords are fetched lazily only when insights need them.
 
 To re-run the fetch, reset the local SwiftData store (see below) and relaunch.
+
+## Pair selection and learning
+
+Pair selection blends Elo uncertainty and adaptive trait learning:
+
+- Rank scoring favors near 50/50 Elo matchups and occasional top-10 challenges.
+- Trait gain uses the taste model to maximize expected information gain.
+- Exploration promotes under-compared movies and axis diversity.
+- A randomesque step picks from the top-K scored pairs to avoid lock-in.
+
+Tune weights and thresholds in `popcorn/Domain/PairSelector.swift` and `popcorn/Domain/TasteCATSelector.swift`.
 
 ## Taste personality (adaptive)
 
@@ -69,11 +94,12 @@ Any of these will wipe local SwiftData storage:
 
 ## Build and test
 
-If you have a different simulator name, swap the destination accordingly.
+If you have a different simulator name, swap the destination accordingly. To list available devices:
 
 ```sh
-xcodebuild -project Popcorn.xcodeproj -scheme Popcorn -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' build
-xcodebuild -project Popcorn.xcodeproj -scheme Popcorn -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' test
+xcrun simctl list devices available
+xcodebuild -project Popcorn.xcodeproj -scheme Popcorn -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2' build
+xcodebuild -project Popcorn.xcodeproj -scheme Popcorn -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2' test
 ```
 
 ## TMDb attribution
