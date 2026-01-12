@@ -160,12 +160,18 @@ struct TMDbClient {
         async let keywordsTask = fetchKeywords(movieID: movieID)
         let (creditsResponse, keywordsResponse) = try await (creditsTask, keywordsTask)
 
+        var seenCast = Set<Int>()
         let cast = creditsResponse.cast
             .sorted { $0.order < $1.order }
+            .filter { seenCast.insert($0.id).inserted }
             .prefix(10)
             .map { CastMember(id: $0.id, name: $0.name, role: $0.character ?? "", order: $0.order) }
+
+        let directorJobs: Set<String> = ["Director", "Co-Director"]
+        var seenCrew = Set<Int>()
         let crew = creditsResponse.crew
-            .filter { $0.job == "Director" }
+            .filter { directorJobs.contains($0.job.trimmingCharacters(in: .whitespacesAndNewlines)) }
+            .filter { seenCrew.insert($0.id).inserted }
             .map { CrewMember(id: $0.id, name: $0.name, job: $0.job) }
         let keywords = keywordsResponse.keywords.map { $0.name }
 

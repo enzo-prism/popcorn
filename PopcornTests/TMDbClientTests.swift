@@ -89,12 +89,15 @@ final class TMDbClientTests: XCTestCase {
 
         let credits = creditsResponse(
             cast: (0..<12).map { index in
-                ["id": index, "name": "Actor \(index)", "character": "Role \(index)", "order": 11 - index]
+                let id = index == 10 ? 1 : index
+                return ["id": id, "name": "Actor \(id)", "character": "Role \(id)", "order": 11 - index]
             },
             crew: [
                 ["id": 1, "name": "Director A", "job": "Director"],
                 ["id": 2, "name": "Writer B", "job": "Writer"],
-                ["id": 3, "name": "Director C", "job": "Director"]
+                ["id": 3, "name": "Director C", "job": "Director"],
+                ["id": 4, "name": "Co Director D", "job": "Co-Director"],
+                ["id": 5, "name": "DP E", "job": "Director of Photography"]
             ]
         )
         let keywords = keywordsResponse(keywords: [
@@ -117,7 +120,8 @@ final class TMDbClientTests: XCTestCase {
 
         XCTAssertEqual(details.cast.count, 10)
         XCTAssertEqual(details.cast.first?.order, 0)
-        XCTAssertEqual(details.crew.map(\.name).sorted(), ["Director A", "Director C"])
+        XCTAssertEqual(Set(details.cast.map(\.id)).count, details.cast.count)
+        XCTAssertEqual(details.crew.map(\.name).sorted(), ["Co Director D", "Director A", "Director C"])
         XCTAssertEqual(details.keywords, ["time travel", "space exploration"])
     }
 
